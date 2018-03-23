@@ -1,0 +1,57 @@
+<idea-plugin version="2">
+    <id>com.outskirtslabs.beancount</id>
+    <name>Beancount</name>
+    <version>0.1</version>
+    <vendor email="unnamedrambler@gmail.com" url="https://caseylink.com">Casey Link</vendor>
+
+    <description><![CDATA[
+  <p>Adds beancount support to Jetbrains IDEs</p>
+  <p>Beancount is "A double-entry bookkeeping computer language that lets you define financial
+  transaction records in a text file, read them in memory, generate a variety of reports from
+  them [...]"</p>
+  <p>Features</p>
+  <ul>
+    <li>Syntax highlighting</li>
+    <li>Completion</li>
+  </ul>
+  <p>More features coming soon</p>
+  <div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+    ]]></description>
+
+    <change-notes><![CDATA[
+      First release
+    ]]>
+    </change-notes>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="173.0"/>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+
+    <!--@formatter:off-->
+  <extensions defaultExtensionNs="com.intellij">
+    <colorSettingsPage implementation="com.outskirtslabs.beancount.features.highlighting.BeancountColorSettingsPage"/>
+    <completion.contributor language="Beancount" implementationClass="com.outskirtslabs.beancount.features.completion.BeancountCompletionContributor"/>
+    <fileTypeFactory implementation="com.outskirtslabs.beancount.BeancountFileTypeFactory"/>
+    <lang.findUsagesProvider language="Beancount" implementationClass="com.outskirtslabs.beancount.features.references.BeancountFindUsagesProvider"/>
+    <lang.parserDefinition language="Beancount" implementationClass="com.outskirtslabs.beancount.BeancountParserDefinition"/>
+    <lang.refactoringSupport language="Beancount" implementationClass="com.outskirtslabs.beancount.features.references.BeancountRefactoringSupportProvider"/>
+    <lang.syntaxHighlighterFactory language="Beancount" implementationClass="com.outskirtslabs.beancount.features.highlighting.BeancountSyntaxHighlighterFactory"/>
+    <moduleBuilder builderClass="com.outskirtslabs.beancount.features.module.BeancountModuleBuilder"/>
+    <moduleType id="BEANCOUNT_MODULE_TYPE" implementationClass="com.outskirtslabs.beancount.features.module.BeancountModuleType"/>
+    <projectStructureDetector implementation="com.outskirtslabs.beancount.features.module.BeancountProjectStructureDetector"/>
+    <psi.referenceContributor language="Beancount" implementation="com.outskirtslabs.beancount.features.references.BeancountReferenceContributor"/>
+    <stubElementTypeHolder class="com.outskirtslabs.beancount.psi.BeancountTypes"/>
+    <stubIndex implementation="com.outskirtslabs.beancount.psi.stub.index.AccountStubIndex"/>
+  </extensions>
+  <!--@formatter:on-->
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+
+</idea-plugin>

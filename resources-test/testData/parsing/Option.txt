@@ -1,0 +1,8 @@
+Beancount File(0,39)
+  BeancountOptionDirImpl(OPTION_DIR)(0,39)
+    PsiElement(OPTION)('option')(0,6)
+    PsiWhiteSpace(' ')(6,7)
+    PsiElement(STRING)('"title"')(7,14)
+    PsiWhiteSpace(' ')(14,15)
+    PsiElement(STRING)('"Example Beancount file"')(15,39)
+

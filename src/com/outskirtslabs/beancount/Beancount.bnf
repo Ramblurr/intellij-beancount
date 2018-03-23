@@ -1,0 +1,114 @@
+{
+  parserClass="com.outskirtslabs.beancount.parser.BeancountParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+  extends(".*expr")=expr
+
+  psiClassPrefix="Beancount"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.outskirtslabs.beancount.psi"
+  psiImplPackage="com.outskirtslabs.beancount.psi.impl"
+
+  elementTypeHolderClass="com.outskirtslabs.beancount.psi.BeancountTypes"
+  elementTypeClass="com.outskirtslabs.beancount.psi.elements.BeancountElementType"
+  tokenTypeClass="com.outskirtslabs.beancount.psi.BeancountTokenType"
+
+  psiImplUtilClass="com.outskirtslabs.beancount.psi.impl.BeancountPsiImplUtil"
+
+  parserImports=[
+    'static com.outskirtslabs.beancount.psi.impl.BeancountPsiImplUtil.*'
+  ]
+
+  tokens=[
+    NEGATIVE_NUMBER='regexp:-?\d+(\.\d*)?'
+    NUMBER='regexp:\d+(\.\d*)?'
+    STRING="regexp:(\"([^\"\\]|\\.)*\")"
+    comment='regexp:;.*'
+    END="regexp:[\n\r]+"
+    space='regexp:[\s]+'
+  ]
+}
+
+beancountFile ::=  blank* item*
+
+private item ::=  !<<eof>>  (metadata_carrier|option_dir|blank)
+private END ::= EOL | <<eof>>
+private blank ::= comment eol | eol | skip | ASTERISK | DIVIDE | PLUS
+    | LPAREN | RPAREN | MINUS | CARET | HASH | LCURL | RCURL | AT | NUMBER
+
+
+private metadata_carrier ::= directive metadata_list
+
+directive ::=
+    commodity_dir
+    | open_dir
+    | transaction_dir
+    | balance_dir
+    | event_dir
+    | price_dir
+
+//    { recoverWhile = expressionRecoverWhile }
+//private expressionRecoverUntil ::= EOL
+//private expressionRecoverWhile ::= !expressionRecoverUntil
+
+
+account_delimiter  ::= COLON
+account_name ::=  ACCOUNT_WORD
+account_segment ::= account_delimiter account_name
+account ::= ACCOUNT_WORD account_segment* { mixin="com.outskirtslabs.beancount.psi.impl.BeancountAccountElementImpl"
+                                 implements="com.outskirtslabs.beancount.psi.elements.BeancountAccountElement"
+                                 methods=[getName setName getNameIdentifier getReference]
+                                 stubClass= "com.outskirtslabs.beancount.psi.stub.AccountStub"
+                                 elementTypeFactory="com.outskirtslabs.beancount.psi.elements.BeancountElementTypeFactory.factory"
+                               }
+
+expr ::=
+    add_group
+  | mul_group
+  | unary_group
+  | primary_group
+
+private mul_group ::= mul_expr | div_expr
+private unary_group ::= unary_plus_expr | unary_min_expr
+private add_group ::= plus_expr | minus_expr
+private primary_group ::= literal_expr | paren_expr
+
+unary_min_expr ::= MINUS expr
+unary_plus_expr ::= PLUS expr
+div_expr ::= expr DIVIDE expr
+mul_expr ::= expr ASTERISK expr
+minus_expr ::= expr MINUS expr
+plus_expr ::= expr PLUS expr
+paren_expr ::= LPAREN expr RPAREN
+literal_expr ::= NUMBER | NEGATIVE_NUMBER
+
+amount ::= expr CURRENCY
+
+
+key_value_value ::= STRING //| account  |DATE | CURRENCY | expr | amount | NUMBER | bool | tag | empty
+key_value ::= META_KEY META_KV_DELIMITER key_value_value
+private key_value_line ::= INDENT key_value END
+private metadata_list ::=  key_value_line*
+
+
+tag_value ::= HASH TAG_LINK_VALUE
+link_value ::= CARET TAG_LINK_VALUE
+tag_link ::= link_value | tag_value
+
+private incomplete_amount ::=  expr? CURRENCY?
+
+compound_amount ::= (expr HASH amount)
+cost_comp ::= compound_amount | amount | DATE | STRING | ASTERISK
+cost_comp_list ::=  cost_comp? (COMMA cost_comp)*
+cost_spec ::= (LCURL cost_comp_list? RCURL) | (LCURLCURL cost_comp_list? RCURLCURL)
+posting_price ::= (AT | ATAT) incomplete_amount
+posting_line ::= INDENT account amount cost_spec? posting_price? END metadata_list
+posting_list ::= posting_line*
+
+option_dir ::= OPTION STRING STRING END
+price_dir ::= DATE PRICE CURRENCY amount END
+open_dir ::= DATE OPEN account CURRENCY? END
+balance_dir ::= DATE BALANCE account amount END
+commodity_dir ::= DATE COMMODITY CURRENCY END
+transaction_dir ::=  DATE (TXN|FLAG) STRING? STRING? tag_link* END metadata_list posting_list
+event_dir ::= DATE EVENT STRING STRING END

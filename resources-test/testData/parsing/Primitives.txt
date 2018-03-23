@@ -1,0 +1,5 @@
+1792-01-01 commodity USD
+  export: "CASH"
+  a: "invalid"
+  a-: "valid"
+  Afoo: "invalid"

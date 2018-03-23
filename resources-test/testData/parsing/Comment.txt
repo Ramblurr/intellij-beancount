@@ -1,0 +1,3 @@
+Beancount File(0,19)
+  PsiComment(comment)('; this is a comment')(0,19)
+

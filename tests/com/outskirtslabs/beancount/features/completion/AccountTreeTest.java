@@ -1,0 +1,135 @@
+package com.outskirtslabs.beancount.features.completion;
+
+import static org.fest.assertions.Assertions.assertThat;
+
+import org.junit.Test;
+
+import io.vavr.collection.List;
+import io.vavr.collection.Set;
+import io.vavr.collection.TreeSet;
+
+public class AccountTreeTest
+{
+
+    Set<String> manyAccounts = TreeSet.of(
+        "Assets:US:Federal:PreTax401k",
+        "Expenses:Financial:Commissions",
+        "Expenses:Financial:Fees",
+        "Expenses:Food:Alcohol",
+        "Expenses:Food:Coffee",
+        "Expenses:Food:Groceries",
+        "Expenses:Food:Restaurant",
+        "Expenses:Health:Dental:Insurance",
+        "Expenses:Health:Life:GroupTermLife",
+        "Expenses:Health:Medical:Insurance",
+        "Expenses:Health:Vision:Insurance",
+        "Expenses:Home:Electricity",
+        "Expenses:Home:Internet",
+        "Expenses:Home:Phone",
+        "Expenses:Home:Rent",
+        "Expenses:Taxes:Y2016:US:CityNYC",
+        "Expenses:Taxes:Y2016:US:Federal:PreTax401k",
+        "Expenses:Taxes:Y2016:US:Medicare",
+        "Expenses:Taxes:Y2016:US:SDI",
+        "Expenses:Taxes:Y2016:US:SocSec",
+        "Expenses:Taxes:Y2016:US:State",
+        "Expenses:Taxes:Y2017:US:CityNYC",
+        "Expenses:Taxes:Y2017:US:Federal:PreTax401k",
+        "Expenses:Taxes:Y2017:US:Medicare",
+        "Expenses:Taxes:Y2017:US:SDI",
+        "Expenses:Taxes:Y2017:US:SocSec",
+        "Expenses:Taxes:Y2017:US:State",
+        "Expenses:Taxes:Y2018:US:CityNYC",
+        "Expenses:Taxes:Y2018:US:Federal:PreTax401k",
+        "Expenses:Taxes:Y2018:US:Medicare",
+        "Expenses:Taxes:Y2018:US:SDI",
+        "Expenses:Taxes:Y2018:US:SocSec",
+        "Expenses:Taxes:Y2018:US:State",
+        "Expenses:Transport:Tram",
+        "Income:US:Federal:PreTax401k"
+    );
+
+    Set<String> fewAccountsAll = TreeSet.of(
+        "Expenses",
+        "Income",
+        "Equity",
+        "Assets",
+        "Assets:US",
+        "Assets:US:BofA",
+        "Assets:US:BofA:Checking",
+        "Liabilities",
+        "Liabilities:AccountsPayable"
+    );
+    List<String> fewAccounts = List.of("Assets:US:BofA:Checking", "Liabilities:AccountsPayable");
+
+    @Test
+    public void getRoot()
+    {
+        AccountTree tree = new AccountTree();
+        assertThat(tree.getOrCreateRoot("Assets")).isEqualTo(new AccountTree.Node("Assets"));
+        assertThat(tree.getOrCreateRoot("Liabilities"))
+            .isEqualTo(new AccountTree.Node("Liabilities"));
+        assertThat(tree.getOrCreateRoot("OMG")).isEqualTo(new AccountTree.Node("OMG"));
+    }
+
+    @Test
+    public void addAccountPaths()
+    {
+        AccountTree tree = new AccountTree();
+        List<String> paths = AccountTree.tokenize(fewAccounts.head()).paths;
+        AccountTree.Node node = tree.addAccountPaths(fewAccounts.head());
+
+        for (String path : paths)
+        {
+            assertThat(node.path).isEqualTo(path);
+            if (paths.last().equals(path)) break;
+            assertThat(node.children.size()).isEqualTo(1);
+            node = node.children.head();
+        }
+    }
+
+    @Test
+    public void getFinalNode()
+    {
+        AccountTree tree = new AccountTree();
+        tree.addAccountPaths("Assets:US:BofA:Checking");
+
+        AccountTree.Node node = tree.getFinalNode("Assets:US:BofA").get();
+        assertThat(node.getPath()).isEqualTo("US");
+
+        // with trailing delimiter it should resolve the immediate parent
+        node = tree.getFinalNode("Assets:US:BofA:").get();
+        assertThat(node.getPath()).isEqualTo("BofA");
+
+        node = tree.getFinalNode("Assets:US:BofA:Ch").get();
+        assertThat(node.getPath()).isEqualTo("BofA");
+
+        node = tree.getFinalNode("Assets:").get();
+        assertThat(node.getPath()).isEqualTo("Assets");
+    }
+
+    @Test
+    public void testBuild()
+    {
+        AccountTree tree = new AccountTree();
+        tree.addAccountPaths(manyAccounts);
+        Set<String> build = tree.build();
+        assertThat(build.toJavaList()).isEqualTo(manyAccounts.toJavaList());
+    }
+    @Test
+    public void testBuildChildren()
+    {
+        AccountTree tree = new AccountTree();
+        String build = tree.addAccountPaths("Assets:US:BofA").buildChildren().head();
+        assertThat(build).isEqualTo("US:BofA");
+    }
+
+    @Test
+    public void testBuildWithIntermediates()
+    {
+        AccountTree tree = new AccountTree();
+        tree.addAccountPaths(fewAccounts);
+        Set<String> build = tree.buildIntermediate();
+        assertThat(build.toJavaList()).isEqualTo(fewAccountsAll.toJavaList());
+    }
+}
