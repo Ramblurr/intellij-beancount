@@ -4,7 +4,7 @@
   extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
   extends(".*expr")=expr
 
-//  psiClassPrefix="Beancount"
+  psiClassPrefix="Beancount"
   psiImplClassSuffix="Impl"
   psiPackage="com.outskirtslabs.beancount.psi"
   psiImplPackage="com.outskirtslabs.beancount.psi.impl"

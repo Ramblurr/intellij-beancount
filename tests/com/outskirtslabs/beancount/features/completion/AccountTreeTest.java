@@ -140,7 +140,7 @@ public class AccountTreeTest
         AccountTree tree = new AccountTree();
         String a = "Assets:US:BofA";
         tree.addAccountPaths(a);
-        assertThat(tree.lengthOfLongestAccount()).isEqualTo(a.length() - 2);
+        assertThat(tree.lengthOfLongestAccount()).isEqualTo(a.length());
     }
 
     @Test
@@ -157,6 +157,6 @@ public class AccountTreeTest
         tree.addAccountPaths(d);
         tree.addAccountPaths(b);
         tree.addAccountPaths(e);
-        assertThat(tree.lengthOfLongestAccount()).isEqualTo(d.replace(":", "").length());
+        assertThat(tree.lengthOfLongestAccount()).isEqualTo(d.length());
     }
 }

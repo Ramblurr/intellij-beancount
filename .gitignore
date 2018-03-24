@@ -1,8 +1,7 @@
 build/
 .gradle
 out/
-idea-flex\.skeleton
-jflex-*jar
+lib
 
 notes.md
 *~

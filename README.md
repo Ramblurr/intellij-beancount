@@ -15,6 +15,12 @@ Roadmap:
 * inspection: transactions balance to 0
 * formatting: align posting amounts
 
+### Contributing
+
+When importing the plugin source into intellij, use the gradle importer and be
+sure to **uncheck** the create separate module per source set option, otherwise
+the generated parser/lexer code will go into `src/` instead of `gen/`
+
 ### Developer notes
 
 Many thanks to the plugin developers who came before and whose code served

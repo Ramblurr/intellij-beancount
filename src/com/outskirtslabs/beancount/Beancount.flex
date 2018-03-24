@@ -1,4 +1,4 @@
-package com.outskirtslabs;
+package com.outskirtslabs.beancount.parser;
 
 import java.util.LinkedList;
 
