@@ -65,12 +65,20 @@ public class BeancountVisitor extends PsiElementVisitor {
     visitExpr(o);
   }
 
+  public void visitDocumentDir(@NotNull BeancountDocumentDir o) {
+    visitPsiElement(o);
+  }
+
   public void visitEventDir(@NotNull BeancountEventDir o) {
     visitPsiElement(o);
   }
 
   public void visitExpr(@NotNull BeancountExpr o) {
     visitExprElement(o);
+  }
+
+  public void visitIncludeDir(@NotNull BeancountIncludeDir o) {
+    visitPsiElement(o);
   }
 
   public void visitKeyValue(@NotNull BeancountKeyValue o) {
@@ -95,6 +103,10 @@ public class BeancountVisitor extends PsiElementVisitor {
 
   public void visitMulExpr(@NotNull BeancountMulExpr o) {
     visitExpr(o);
+  }
+
+  public void visitNoteDir(@NotNull BeancountNoteDir o) {
+    visitPsiElement(o);
   }
 
   public void visitOpenDir(@NotNull BeancountOpenDir o) {
@@ -130,6 +142,10 @@ public class BeancountVisitor extends PsiElementVisitor {
   }
 
   public void visitPriceDir(@NotNull BeancountPriceDir o) {
+    visitPsiElement(o);
+  }
+
+  public void visitQueryDir(@NotNull BeancountQueryDir o) {
     visitPsiElement(o);
   }
 

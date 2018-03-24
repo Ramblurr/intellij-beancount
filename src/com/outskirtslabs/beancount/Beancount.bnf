@@ -31,7 +31,7 @@
 
 beancountFile ::=  blank* item*
 
-private item ::=  !<<eof>>  (metadata_carrier|option_dir|blank)
+private item ::=  !<<eof>>  (metadata_carrier|option_dir|include_dir|blank)
 private END ::= EOL | <<eof>>
 private blank ::= comment eol | eol | skip | ASTERISK | DIVIDE | PLUS
     | LPAREN | RPAREN | MINUS | CARET | HASH | LCURL | RCURL | AT | NUMBER
@@ -48,6 +48,9 @@ directive ::=
     | price_dir
     | custom_dir
     | pad_dir
+    | document_dir
+    | note_dir
+    | query_dir
 
 //    { recoverWhile = expressionRecoverWhile }
 //private expressionRecoverUntil ::= EOL
@@ -111,6 +114,7 @@ posting_line ::= INDENT account amount cost_spec? posting_price? END metadata_li
 posting_list ::= posting_line*
 
 option_dir ::= OPTION STRING STRING END
+include_dir ::= INCLUDE STRING END
 price_dir ::= DATE PRICE CURRENCY amount END
 open_dir ::= DATE OPEN account CURRENCY? END
 balance_dir ::= DATE BALANCE account amount END
@@ -119,3 +123,6 @@ transaction_dir ::=  DATE (TXN|FLAG) STRING? STRING? tag_link* END metadata_list
 event_dir ::= DATE EVENT STRING STRING END
 custom_dir ::= DATE CUSTOM STRING (account|STRING|DATE|amount|expr|BOOLEAN)* END
 pad_dir ::= DATE PAD account account END
+note_dir ::= DATE NOTE account STRING END
+document_dir ::= DATE DOCUMENT account STRING END
+query_dir ::= DATE QUERY STRING STRING END

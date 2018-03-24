@@ -46,8 +46,20 @@ public class BeancountDirectiveImpl extends ASTWrapperPsiElement implements Bean
 
   @Override
   @Nullable
+  public BeancountDocumentDir getDocumentDir() {
+    return PsiTreeUtil.getChildOfType(this, BeancountDocumentDir.class);
+  }
+
+  @Override
+  @Nullable
   public BeancountEventDir getEventDir() {
     return PsiTreeUtil.getChildOfType(this, BeancountEventDir.class);
+  }
+
+  @Override
+  @Nullable
+  public BeancountNoteDir getNoteDir() {
+    return PsiTreeUtil.getChildOfType(this, BeancountNoteDir.class);
   }
 
   @Override
@@ -66,6 +78,12 @@ public class BeancountDirectiveImpl extends ASTWrapperPsiElement implements Bean
   @Nullable
   public BeancountPriceDir getPriceDir() {
     return PsiTreeUtil.getChildOfType(this, BeancountPriceDir.class);
+  }
+
+  @Override
+  @Nullable
+  public BeancountQueryDir getQueryDir() {
+    return PsiTreeUtil.getChildOfType(this, BeancountQueryDir.class);
   }
 
   @Override

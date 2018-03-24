@@ -17,7 +17,13 @@ public interface BeancountDirective extends PsiElement {
   BeancountCustomDir getCustomDir();
 
   @Nullable
+  BeancountDocumentDir getDocumentDir();
+
+  @Nullable
   BeancountEventDir getEventDir();
+
+  @Nullable
+  BeancountNoteDir getNoteDir();
 
   @Nullable
   BeancountOpenDir getOpenDir();
@@ -27,6 +33,9 @@ public interface BeancountDirective extends PsiElement {
 
   @Nullable
   BeancountPriceDir getPriceDir();
+
+  @Nullable
+  BeancountQueryDir getQueryDir();
 
   @Nullable
   BeancountTransactionDir getTransactionDir();

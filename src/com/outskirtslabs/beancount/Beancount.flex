@@ -53,7 +53,6 @@ import static com.outskirtslabs.beancount.BeancountLexerUtil.*;
 //EOL=\R
 WHITE_SPACE=\s+
 
-BOOLEAN=(TRUE|FALSE)
 NUMBER=[0-9]+(\.[0-9]*)?
 NEGATIVE_NUMBER=-{NUMBER}
 DATE=[:digit:]{4}-[:digit:]{2}-[:digit:]{2}
@@ -69,11 +68,9 @@ ACCOUNT_WORD={ACCOUNT_START}{ACCOUNT_PART}*
 CURRENCY=[A-Z][A-Z_-]*[A-Z]
 META_KEY=[a-z][a-zA-Z0-9_-]+
 TAG_LINK_VAL=[A-Za-z0-9\-_/.]+
-ATAT="@@"
-AT="@"
 
 // i know this probably isn't a "good" lexer design, it is too stateful but :\ it's my first one
-%state sOPT, sEVENT, sDATE_ENTRY, sOPEN, sBALANCE, sPRICE, sCOMMODITY, sMETA_LIST, sPOSTING, sACCOUNT, sCUSTOM, sPAD
+%state sOPT, sEVENT, sDATE_ENTRY, sOPEN, sBALANCE, sPRICE, sCOMMODITY, sMETA_LIST, sPOSTING, sACCOUNT, sCUSTOM, sPAD, sQUERY, sNOTE, sDOCUMENT, sINCLUDE
 %xstate sTXN
 
 %%
@@ -88,7 +85,7 @@ AT="@"
 ^{LINE_SPACE}+{META_KEY} {  yypushback(nonWsIndex(yytext())); yypushstate(sMETA_LIST); return INDENT; }
 {CURRENCY}          { return CURRENCY; }
 
-<sOPT, sEVENT, sPRICE> {
+<sOPT, sEVENT, sPRICE, sINCLUDE, sQUERY> {
 {EOL}               { yylogstate(YYINITIAL); return EOL; }
 {LINE_SPACE}+       { return WHITE_SPACE; }
 {STRING}            { return STRING; }
@@ -98,15 +95,12 @@ AT="@"
 {EOL}               { yylogstate(YYINITIAL); return EOL; }
 {LINE_SPACE}+       { return WHITE_SPACE; }
 }
-<sOPEN, sBALANCE, sCUSTOM, sPAD> {
+<sOPEN, sBALANCE, sCUSTOM, sPAD, sNOTE, sDOCUMENT> {
 {EOL}               { yylogstate(YYINITIAL); return EOL; }
 {LINE_SPACE}+       { return WHITE_SPACE; }
 {ACCOUNT_WORD}      { yypushstate(sACCOUNT); return ACCOUNT_WORD; }
 }
 
-//<sTXN_TAG_LINK> {
-//    {TAG_LINK_VAL} { yypopstate(); return TAG_LINK_VALUE; }
-//}
 <sTXN> {
 "#"                  { return HASH; }
 "^"                  { return CARET; }
@@ -142,22 +136,28 @@ AT="@"
   "txn"|{FLAG}       { yylogstate(sTXN); return TXN; }
   "custom"           { yylogstate(sCUSTOM); return CUSTOM;}
   "pad"              { yylogstate(sPAD); return PAD;}
+  "note"             { yylogstate(sNOTE); return NOTE;}
+  "document"         { yylogstate(sDOCUMENT); return DOCUMENT;}
+  "query"            { yylogstate(sQUERY); return QUERY;}
 }
 
 <YYINITIAL> {
   ^"option"         { yylogstate(sOPT); return OPTION; }
+  ^"include"        { yylogstate(sINCLUDE); return INCLUDE;}
   ^{DATE}           { yylogstate(sDATE_ENTRY); return DATE; }
   {COMMENT}         { return COMMENT; }
   {EOL}             { return EOL; }
 }
 
+"TRUE"              { return BOOLEAN; }
+"FALSE"             { return BOOLEAN; }
 "{{"                { return LCURLCURL; }
 "}}"                { return RCURLCURL; }
 "{"                 { return LCURL; }
 "}"                 { return RCURL; }
 ","                 { return COMMA; }
 "#"                 { return HASH; }
-"@@"                { return ATAT;}
+"@@"                { return ATAT; }
 "@"                 { return AT;}
 "("                 { return LPAREN; }
 ")"                 { return RPAREN; }
@@ -169,9 +169,8 @@ AT="@"
 {NUMBER}            { return NUMBER; }
 {NEGATIVE_NUMBER}   { return NEGATIVE_NUMBER; }
 {STRING}            { return STRING; }
-{BOOLEAN}           { return BOOLEAN;}
 
-<sOPT, sEVENT, sDATE_ENTRY, sOPEN, sBALANCE, sCOMMODITY, sMETA_LIST, sPOSTING, sACCOUNT, sTXN, sPRICE, sCUSTOM, sPAD>
+<sOPT, sEVENT, sDATE_ENTRY, sOPEN, sBALANCE, sCOMMODITY, sMETA_LIST, sPOSTING, sACCOUNT, sTXN, sPRICE, sCUSTOM, sPAD, sDOCUMENT, sNOTE, sQUERY, sINCLUDE>
 {
     [^] { return BAD_CHARACTER; }
 }

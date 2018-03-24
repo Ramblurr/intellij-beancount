@@ -63,11 +63,17 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     else if (t == DIRECTIVE) {
       r = directive(b, 0);
     }
+    else if (t == DOCUMENT_DIR) {
+      r = document_dir(b, 0);
+    }
     else if (t == EVENT_DIR) {
       r = event_dir(b, 0);
     }
     else if (t == EXPR) {
       r = expr(b, 0, -1);
+    }
+    else if (t == INCLUDE_DIR) {
+      r = include_dir(b, 0);
     }
     else if (t == KEY_VALUE) {
       r = key_value(b, 0);
@@ -77,6 +83,9 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     }
     else if (t == LINK_VALUE) {
       r = link_value(b, 0);
+    }
+    else if (t == NOTE_DIR) {
+      r = note_dir(b, 0);
     }
     else if (t == OPEN_DIR) {
       r = open_dir(b, 0);
@@ -98,6 +107,9 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     }
     else if (t == PRICE_DIR) {
       r = price_dir(b, 0);
+    }
+    else if (t == QUERY_DIR) {
+      r = query_dir(b, 0);
     }
     else if (t == TAG_LINK) {
       r = tag_link(b, 0);
@@ -471,6 +483,9 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   //     | price_dir
   //     | custom_dir
   //     | pad_dir
+  //     | document_dir
+  //     | note_dir
+  //     | query_dir
   public static boolean directive(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "directive")) return false;
     if (!nextTokenIs(b, DATE)) return false;
@@ -484,7 +499,25 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     if (!r) r = price_dir(b, l + 1);
     if (!r) r = custom_dir(b, l + 1);
     if (!r) r = pad_dir(b, l + 1);
+    if (!r) r = document_dir(b, l + 1);
+    if (!r) r = note_dir(b, l + 1);
+    if (!r) r = query_dir(b, l + 1);
     exit_section_(b, m, DIRECTIVE, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // DATE DOCUMENT account STRING END
+  public static boolean document_dir(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "document_dir")) return false;
+    if (!nextTokenIs(b, DATE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, DATE, DOCUMENT);
+    r = r && account(b, l + 1);
+    r = r && consumeToken(b, STRING);
+    r = r && END(b, l + 1);
+    exit_section_(b, m, DOCUMENT_DIR, r);
     return r;
   }
 
@@ -498,6 +531,19 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     r = consumeTokens(b, 0, DATE, EVENT, STRING, STRING);
     r = r && END(b, l + 1);
     exit_section_(b, m, EVENT_DIR, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // INCLUDE STRING END
+  public static boolean include_dir(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "include_dir")) return false;
+    if (!nextTokenIs(b, INCLUDE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, INCLUDE, STRING);
+    r = r && END(b, l + 1);
+    exit_section_(b, m, INCLUDE_DIR, r);
     return r;
   }
 
@@ -528,7 +574,7 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // !<<eof>>  (metadata_carrier|option_dir|blank)
+  // !<<eof>>  (metadata_carrier|option_dir|include_dir|blank)
   static boolean item(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "item")) return false;
     boolean r;
@@ -549,13 +595,14 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // metadata_carrier|option_dir|blank
+  // metadata_carrier|option_dir|include_dir|blank
   private static boolean item_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "item_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = metadata_carrier(b, l + 1);
     if (!r) r = option_dir(b, l + 1);
+    if (!r) r = include_dir(b, l + 1);
     if (!r) r = blank(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -636,6 +683,21 @@ public class BeancountParser implements PsiParser, LightPsiParser {
       c = current_position_(b);
     }
     return true;
+  }
+
+  /* ********************************************************** */
+  // DATE NOTE account STRING END
+  public static boolean note_dir(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "note_dir")) return false;
+    if (!nextTokenIs(b, DATE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, DATE, NOTE);
+    r = r && account(b, l + 1);
+    r = r && consumeToken(b, STRING);
+    r = r && END(b, l + 1);
+    exit_section_(b, m, NOTE_DIR, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -770,6 +832,19 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     r = r && amount(b, l + 1);
     r = r && END(b, l + 1);
     exit_section_(b, m, PRICE_DIR, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // DATE QUERY STRING STRING END
+  public static boolean query_dir(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "query_dir")) return false;
+    if (!nextTokenIs(b, DATE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, DATE, QUERY, STRING, STRING);
+    r = r && END(b, l + 1);
+    exit_section_(b, m, QUERY_DIR, r);
     return r;
   }
 

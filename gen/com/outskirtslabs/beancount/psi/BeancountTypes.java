@@ -24,14 +24,17 @@ public interface BeancountTypes {
   IElementType CUSTOM_DIR = new BeancountElementType("CUSTOM_DIR");
   IElementType DIRECTIVE = new BeancountElementType("DIRECTIVE");
   IElementType DIV_EXPR = new BeancountElementType("DIV_EXPR");
+  IElementType DOCUMENT_DIR = new BeancountElementType("DOCUMENT_DIR");
   IElementType EVENT_DIR = new BeancountElementType("EVENT_DIR");
   IElementType EXPR = new BeancountElementType("EXPR");
+  IElementType INCLUDE_DIR = new BeancountElementType("INCLUDE_DIR");
   IElementType KEY_VALUE = new BeancountElementType("KEY_VALUE");
   IElementType KEY_VALUE_VALUE = new BeancountElementType("KEY_VALUE_VALUE");
   IElementType LINK_VALUE = new BeancountElementType("LINK_VALUE");
   IElementType LITERAL_EXPR = new BeancountElementType("LITERAL_EXPR");
   IElementType MINUS_EXPR = new BeancountElementType("MINUS_EXPR");
   IElementType MUL_EXPR = new BeancountElementType("MUL_EXPR");
+  IElementType NOTE_DIR = new BeancountElementType("NOTE_DIR");
   IElementType OPEN_DIR = new BeancountElementType("OPEN_DIR");
   IElementType OPTION_DIR = new BeancountElementType("OPTION_DIR");
   IElementType PAD_DIR = new BeancountElementType("PAD_DIR");
@@ -41,6 +44,7 @@ public interface BeancountTypes {
   IElementType POSTING_LIST = new BeancountElementType("POSTING_LIST");
   IElementType POSTING_PRICE = new BeancountElementType("POSTING_PRICE");
   IElementType PRICE_DIR = new BeancountElementType("PRICE_DIR");
+  IElementType QUERY_DIR = new BeancountElementType("QUERY_DIR");
   IElementType TAG_LINK = new BeancountElementType("TAG_LINK");
   IElementType TAG_VALUE = new BeancountElementType("TAG_VALUE");
   IElementType TRANSACTION_DIR = new BeancountElementType("TRANSACTION_DIR");
@@ -62,10 +66,12 @@ public interface BeancountTypes {
   IElementType CUSTOM = new BeancountTokenType("CUSTOM");
   IElementType DATE = new BeancountTokenType("DATE");
   IElementType DIVIDE = new BeancountTokenType("DIVIDE");
+  IElementType DOCUMENT = new BeancountTokenType("DOCUMENT");
   IElementType EOL = new BeancountTokenType("eol");
   IElementType EVENT = new BeancountTokenType("EVENT");
   IElementType FLAG = new BeancountTokenType("FLAG");
   IElementType HASH = new BeancountTokenType("HASH");
+  IElementType INCLUDE = new BeancountTokenType("INCLUDE");
   IElementType INDENT = new BeancountTokenType("INDENT");
   IElementType LCURL = new BeancountTokenType("LCURL");
   IElementType LCURLCURL = new BeancountTokenType("LCURLCURL");
@@ -74,12 +80,14 @@ public interface BeancountTypes {
   IElementType META_KV_DELIMITER = new BeancountTokenType("META_KV_DELIMITER");
   IElementType MINUS = new BeancountTokenType("MINUS");
   IElementType NEGATIVE_NUMBER = new BeancountTokenType("NEGATIVE_NUMBER");
+  IElementType NOTE = new BeancountTokenType("NOTE");
   IElementType NUMBER = new BeancountTokenType("NUMBER");
   IElementType OPEN = new BeancountTokenType("OPEN");
   IElementType OPTION = new BeancountTokenType("OPTION");
   IElementType PAD = new BeancountTokenType("PAD");
   IElementType PLUS = new BeancountTokenType("PLUS");
   IElementType PRICE = new BeancountTokenType("PRICE");
+  IElementType QUERY = new BeancountTokenType("QUERY");
   IElementType RCURL = new BeancountTokenType("RCURL");
   IElementType RCURLCURL = new BeancountTokenType("RCURLCURL");
   IElementType RPAREN = new BeancountTokenType("RPAREN");
@@ -133,8 +141,14 @@ public interface BeancountTypes {
       else if (type == DIV_EXPR) {
         return new BeancountDivExprImpl(node);
       }
+      else if (type == DOCUMENT_DIR) {
+        return new BeancountDocumentDirImpl(node);
+      }
       else if (type == EVENT_DIR) {
         return new BeancountEventDirImpl(node);
+      }
+      else if (type == INCLUDE_DIR) {
+        return new BeancountIncludeDirImpl(node);
       }
       else if (type == KEY_VALUE) {
         return new BeancountKeyValueImpl(node);
@@ -153,6 +167,9 @@ public interface BeancountTypes {
       }
       else if (type == MUL_EXPR) {
         return new BeancountMulExprImpl(node);
+      }
+      else if (type == NOTE_DIR) {
+        return new BeancountNoteDirImpl(node);
       }
       else if (type == OPEN_DIR) {
         return new BeancountOpenDirImpl(node);
@@ -180,6 +197,9 @@ public interface BeancountTypes {
       }
       else if (type == PRICE_DIR) {
         return new BeancountPriceDirImpl(node);
+      }
+      else if (type == QUERY_DIR) {
+        return new BeancountQueryDirImpl(node);
       }
       else if (type == TAG_LINK) {
         return new BeancountTagLinkImpl(node);
