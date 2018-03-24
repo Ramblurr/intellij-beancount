@@ -72,7 +72,8 @@ TAG_LINK_VAL=[A-Za-z0-9\-_/.]+
 ATAT="@@"
 AT="@"
 
-%state sOPT, sEVENT, sDATE_ENTRY, sOPEN, sBALANCE, sPRICE, sCOMMODITY, sMETA_LIST, sPOSTING, sACCOUNT, sCUSTOM
+// i know this probably isn't a "good" lexer design, it is too stateful but :\ it's my first one
+%state sOPT, sEVENT, sDATE_ENTRY, sOPEN, sBALANCE, sPRICE, sCOMMODITY, sMETA_LIST, sPOSTING, sACCOUNT, sCUSTOM, sPAD
 %xstate sTXN
 
 %%
@@ -97,12 +98,7 @@ AT="@"
 {EOL}               { yylogstate(YYINITIAL); return EOL; }
 {LINE_SPACE}+       { return WHITE_SPACE; }
 }
-<sBALANCE> {
-{EOL}               { yylogstate(YYINITIAL); return EOL; }
-{LINE_SPACE}+       { return WHITE_SPACE; }
-{ACCOUNT_WORD}      { yypushstate(sACCOUNT); return ACCOUNT_WORD; }
-}
-<sOPEN> {
+<sOPEN, sBALANCE, sCUSTOM, sPAD> {
 {EOL}               { yylogstate(YYINITIAL); return EOL; }
 {LINE_SPACE}+       { return WHITE_SPACE; }
 {ACCOUNT_WORD}      { yypushstate(sACCOUNT); return ACCOUNT_WORD; }
@@ -136,13 +132,6 @@ AT="@"
 {EOL_SINGLE}         { yypushback(yylength()); yypopstate(); }
 }
 
-<sCUSTOM> {
-{ACCOUNT_WORD}       { yypushstate(sACCOUNT); return ACCOUNT_WORD; }
-{LINE_SPACE}+        { return WHITE_SPACE; }
-{EOL_SINGLE}         { yypushback(yylength()); yypopstate(); }
-}
-
-
 <sDATE_ENTRY> {
   {LINE_SPACE}+      { return WHITE_SPACE; }
   "price"            { yylogstate(sPRICE); return PRICE; }
@@ -152,6 +141,7 @@ AT="@"
   "event"            { yylogstate(sEVENT); return EVENT; }
   "txn"|{FLAG}       { yylogstate(sTXN); return TXN; }
   "custom"           { yylogstate(sCUSTOM); return CUSTOM;}
+  "pad"              { yylogstate(sPAD); return PAD;}
 }
 
 <YYINITIAL> {
@@ -181,7 +171,7 @@ AT="@"
 {STRING}            { return STRING; }
 {BOOLEAN}           { return BOOLEAN;}
 
-<sOPT, sEVENT, sDATE_ENTRY, sOPEN, sBALANCE, sCOMMODITY, sMETA_LIST, sPOSTING, sACCOUNT, sTXN, sPRICE, sCUSTOM>
+<sOPT, sEVENT, sDATE_ENTRY, sOPEN, sBALANCE, sCOMMODITY, sMETA_LIST, sPOSTING, sACCOUNT, sTXN, sPRICE, sCUSTOM, sPAD>
 {
     [^] { return BAD_CHARACTER; }
 }

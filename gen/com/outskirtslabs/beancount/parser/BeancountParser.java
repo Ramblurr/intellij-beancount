@@ -84,6 +84,9 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     else if (t == OPTION_DIR) {
       r = option_dir(b, 0);
     }
+    else if (t == PAD_DIR) {
+      r = pad_dir(b, 0);
+    }
     else if (t == POSTING_LINE) {
       r = posting_line(b, 0);
     }
@@ -467,6 +470,7 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   //     | event_dir
   //     | price_dir
   //     | custom_dir
+  //     | pad_dir
   public static boolean directive(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "directive")) return false;
     if (!nextTokenIs(b, DATE)) return false;
@@ -479,6 +483,7 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     if (!r) r = event_dir(b, l + 1);
     if (!r) r = price_dir(b, l + 1);
     if (!r) r = custom_dir(b, l + 1);
+    if (!r) r = pad_dir(b, l + 1);
     exit_section_(b, m, DIRECTIVE, r);
     return r;
   }
@@ -665,6 +670,21 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     r = consumeTokens(b, 0, OPTION, STRING, STRING);
     r = r && END(b, l + 1);
     exit_section_(b, m, OPTION_DIR, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // DATE PAD account account END
+  public static boolean pad_dir(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "pad_dir")) return false;
+    if (!nextTokenIs(b, DATE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, DATE, PAD);
+    r = r && account(b, l + 1);
+    r = r && account(b, l + 1);
+    r = r && END(b, l + 1);
+    exit_section_(b, m, PAD_DIR, r);
     return r;
   }
 

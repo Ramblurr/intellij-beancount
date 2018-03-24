@@ -47,6 +47,7 @@ directive ::=
     | event_dir
     | price_dir
     | custom_dir
+    | pad_dir
 
 //    { recoverWhile = expressionRecoverWhile }
 //private expressionRecoverUntil ::= EOL
@@ -117,3 +118,4 @@ commodity_dir ::= DATE COMMODITY CURRENCY END
 transaction_dir ::=  DATE (TXN|FLAG) STRING? STRING? tag_link* END metadata_list posting_list
 event_dir ::= DATE EVENT STRING STRING END
 custom_dir ::= DATE CUSTOM STRING (account|STRING|DATE|amount|expr|BOOLEAN)* END
+pad_dir ::= DATE PAD account account END

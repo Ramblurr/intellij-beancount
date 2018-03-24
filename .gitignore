@@ -3,3 +3,5 @@ build/
 out/
 idea-flex\.skeleton
 jflex-*jar
+
+notes.md

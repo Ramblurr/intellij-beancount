@@ -4,6 +4,7 @@ import static com.outskirtslabs.beancount.psi.BeancountTypes.CUSTOM;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.EVENT;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.OPEN;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.OPTION;
+import static com.outskirtslabs.beancount.psi.BeancountTypes.PAD;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.PRICE;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.TXN;
 
@@ -18,7 +19,8 @@ public class BeancountTypeUtil
         TXN,
         EVENT,
         PRICE,
-        CUSTOM
+        CUSTOM,
+        PAD
     );
 
 }

@@ -2,10 +2,12 @@ package com.outskirtslabs.beancount.features.completion;
 
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.base.Stopwatch;
 import com.intellij.openapi.diagnostic.Logger;
 import com.outskirtslabs.beancount.psi.BeancountFile;
 
@@ -27,9 +29,11 @@ public class AccountsCompleter
 
     private void reset(Stream<String> paths)
     {
+        Stopwatch stopwatch = Stopwatch.createStarted();
         tree = new AccountTree();
         paths.filter(s -> !StringUtils.equals(s, DUMMY_IDENT) || StringUtils.isBlank(s))
              .forEach(tree::addAccountPaths);
+        LOG.info("index complete in " + stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 
     /**

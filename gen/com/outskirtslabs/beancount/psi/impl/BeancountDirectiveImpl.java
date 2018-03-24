@@ -58,6 +58,12 @@ public class BeancountDirectiveImpl extends ASTWrapperPsiElement implements Bean
 
   @Override
   @Nullable
+  public BeancountPadDir getPadDir() {
+    return PsiTreeUtil.getChildOfType(this, BeancountPadDir.class);
+  }
+
+  @Override
+  @Nullable
   public BeancountPriceDir getPriceDir() {
     return PsiTreeUtil.getChildOfType(this, BeancountPriceDir.class);
   }

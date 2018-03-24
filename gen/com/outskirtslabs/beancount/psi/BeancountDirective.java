@@ -23,6 +23,9 @@ public interface BeancountDirective extends PsiElement {
   BeancountOpenDir getOpenDir();
 
   @Nullable
+  BeancountPadDir getPadDir();
+
+  @Nullable
   BeancountPriceDir getPriceDir();
 
   @Nullable

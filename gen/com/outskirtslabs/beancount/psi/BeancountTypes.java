@@ -34,6 +34,7 @@ public interface BeancountTypes {
   IElementType MUL_EXPR = new BeancountElementType("MUL_EXPR");
   IElementType OPEN_DIR = new BeancountElementType("OPEN_DIR");
   IElementType OPTION_DIR = new BeancountElementType("OPTION_DIR");
+  IElementType PAD_DIR = new BeancountElementType("PAD_DIR");
   IElementType PAREN_EXPR = new BeancountElementType("PAREN_EXPR");
   IElementType PLUS_EXPR = new BeancountElementType("PLUS_EXPR");
   IElementType POSTING_LINE = new BeancountElementType("POSTING_LINE");
@@ -76,6 +77,7 @@ public interface BeancountTypes {
   IElementType NUMBER = new BeancountTokenType("NUMBER");
   IElementType OPEN = new BeancountTokenType("OPEN");
   IElementType OPTION = new BeancountTokenType("OPTION");
+  IElementType PAD = new BeancountTokenType("PAD");
   IElementType PLUS = new BeancountTokenType("PLUS");
   IElementType PRICE = new BeancountTokenType("PRICE");
   IElementType RCURL = new BeancountTokenType("RCURL");
@@ -157,6 +159,9 @@ public interface BeancountTypes {
       }
       else if (type == OPTION_DIR) {
         return new BeancountOptionDirImpl(node);
+      }
+      else if (type == PAD_DIR) {
+        return new BeancountPadDirImpl(node);
       }
       else if (type == PAREN_EXPR) {
         return new BeancountParenExprImpl(node);

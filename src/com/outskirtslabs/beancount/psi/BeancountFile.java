@@ -1,10 +1,12 @@
 package com.outskirtslabs.beancount.psi;
 
 import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.google.common.base.Stopwatch;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
@@ -96,13 +98,7 @@ public class BeancountFile extends PsiFileBase
 
     public Stream<String> getAllAccounts()
     {
-//        Stream<BeancountAccount> accounts = Arrays.stream(this.getChildren())
-//                                                  .peek( e -> LOG.info("\t " + e.getClass().getName()))
-//                                                  .filter(e -> e instanceof BeancountAccount)
-//                                                  .map(e -> (BeancountAccount) e)
-//                                                  .distinct();
-//        return accounts;
-
+        Stopwatch stopwatch = Stopwatch.createStarted();
         HashSet<String> names = new HashSet<>();
         this.acceptChildren(new BeancountRecursiveVisitor()
         {
@@ -112,6 +108,8 @@ public class BeancountFile extends PsiFileBase
                 names.add(o.getText());
             }
         });
+
+        LOG.info("getAllAccounts complete in " + stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return names.stream();
     }
 }

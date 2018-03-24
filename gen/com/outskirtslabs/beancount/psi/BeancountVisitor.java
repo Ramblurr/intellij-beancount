@@ -105,6 +105,10 @@ public class BeancountVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitPadDir(@NotNull BeancountPadDir o) {
+    visitPsiElement(o);
+  }
+
   public void visitParenExpr(@NotNull BeancountParenExpr o) {
     visitExpr(o);
   }
