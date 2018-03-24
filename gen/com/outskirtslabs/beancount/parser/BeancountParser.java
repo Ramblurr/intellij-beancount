@@ -57,6 +57,9 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     else if (t == COST_SPEC) {
       r = cost_spec(b, 0);
     }
+    else if (t == CUSTOM_DIR) {
+      r = custom_dir(b, 0);
+    }
     else if (t == DIRECTIVE) {
       r = directive(b, 0);
     }
@@ -416,12 +419,54 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // DATE CUSTOM STRING (account|STRING|DATE|amount|expr|BOOLEAN)* END
+  public static boolean custom_dir(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "custom_dir")) return false;
+    if (!nextTokenIs(b, DATE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, DATE, CUSTOM, STRING);
+    r = r && custom_dir_3(b, l + 1);
+    r = r && END(b, l + 1);
+    exit_section_(b, m, CUSTOM_DIR, r);
+    return r;
+  }
+
+  // (account|STRING|DATE|amount|expr|BOOLEAN)*
+  private static boolean custom_dir_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "custom_dir_3")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!custom_dir_3_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "custom_dir_3", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // account|STRING|DATE|amount|expr|BOOLEAN
+  private static boolean custom_dir_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "custom_dir_3_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = account(b, l + 1);
+    if (!r) r = consumeToken(b, STRING);
+    if (!r) r = consumeToken(b, DATE);
+    if (!r) r = amount(b, l + 1);
+    if (!r) r = expr(b, l + 1, -1);
+    if (!r) r = consumeToken(b, BOOLEAN);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // commodity_dir
   //     | open_dir
   //     | transaction_dir
   //     | balance_dir
   //     | event_dir
   //     | price_dir
+  //     | custom_dir
   public static boolean directive(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "directive")) return false;
     if (!nextTokenIs(b, DATE)) return false;
@@ -433,6 +478,7 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     if (!r) r = balance_dir(b, l + 1);
     if (!r) r = event_dir(b, l + 1);
     if (!r) r = price_dir(b, l + 1);
+    if (!r) r = custom_dir(b, l + 1);
     exit_section_(b, m, DIRECTIVE, r);
     return r;
   }

@@ -2,7 +2,6 @@ package com.outskirtslabs.beancount.features.highlighting;
 
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
 import com.intellij.lexer.Lexer;
@@ -13,6 +12,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.outskirtslabs.beancount.parser.BeancountLexer;
+import com.outskirtslabs.beancount.psi.BeancountTypeUtil;
 import com.outskirtslabs.beancount.psi.BeancountTypes;
 
 public class BeancountSyntaxHighlighter extends SyntaxHighlighterBase
@@ -46,15 +46,6 @@ public class BeancountSyntaxHighlighter extends SyntaxHighlighterBase
 
     private static final TextAttributesKey[] EMPTY_KEYS = new TextAttributesKey[0];
 
-    private static final IElementType[] DIRECTIVES_TYPES = {
-        BeancountTypes.OPTION,
-        BeancountTypes.TXN,
-        BeancountTypes.BALANCE,
-        BeancountTypes.COMMODITY,
-        BeancountTypes.OPEN,
-        BeancountTypes.PRICE
-    };
-
     @NotNull
     @Override
     public Lexer getHighlightingLexer()
@@ -66,8 +57,7 @@ public class BeancountSyntaxHighlighter extends SyntaxHighlighterBase
     @Override
     public TextAttributesKey[] getTokenHighlights(IElementType tokenType)
     {
-
-        if (ArrayUtils.contains(DIRECTIVES_TYPES, tokenType))
+        if (BeancountTypeUtil.DIRECTIVE_KEYWORDS.contains(tokenType))
             return DIRECTIVE_KEYS;
         else if (tokenType.equals(BeancountTypes.COMMENT))
             return COMMENT_KEYS;

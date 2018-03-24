@@ -4,7 +4,7 @@
   extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
   extends(".*expr")=expr
 
-  psiClassPrefix="Beancount"
+//  psiClassPrefix="Beancount"
   psiImplClassSuffix="Impl"
   psiPackage="com.outskirtslabs.beancount.psi"
   psiImplPackage="com.outskirtslabs.beancount.psi.impl"
@@ -46,6 +46,7 @@ directive ::=
     | balance_dir
     | event_dir
     | price_dir
+    | custom_dir
 
 //    { recoverWhile = expressionRecoverWhile }
 //private expressionRecoverUntil ::= EOL
@@ -115,3 +116,4 @@ balance_dir ::= DATE BALANCE account amount END
 commodity_dir ::= DATE COMMODITY CURRENCY END
 transaction_dir ::=  DATE (TXN|FLAG) STRING? STRING? tag_link* END metadata_list posting_list
 event_dir ::= DATE EVENT STRING STRING END
+custom_dir ::= DATE CUSTOM STRING (account|STRING|DATE|amount|expr|BOOLEAN)* END

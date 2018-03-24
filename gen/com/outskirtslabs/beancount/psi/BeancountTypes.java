@@ -21,6 +21,7 @@ public interface BeancountTypes {
   IElementType COST_COMP = new BeancountElementType("COST_COMP");
   IElementType COST_COMP_LIST = new BeancountElementType("COST_COMP_LIST");
   IElementType COST_SPEC = new BeancountElementType("COST_SPEC");
+  IElementType CUSTOM_DIR = new BeancountElementType("CUSTOM_DIR");
   IElementType DIRECTIVE = new BeancountElementType("DIRECTIVE");
   IElementType DIV_EXPR = new BeancountElementType("DIV_EXPR");
   IElementType EVENT_DIR = new BeancountElementType("EVENT_DIR");
@@ -50,12 +51,14 @@ public interface BeancountTypes {
   IElementType AT = new BeancountTokenType("AT");
   IElementType ATAT = new BeancountTokenType("ATAT");
   IElementType BALANCE = new BeancountTokenType("BALANCE");
+  IElementType BOOLEAN = new BeancountTokenType("BOOLEAN");
   IElementType CARET = new BeancountTokenType("CARET");
   IElementType COLON = new BeancountTokenType("COLON");
   IElementType COMMA = new BeancountTokenType("COMMA");
   IElementType COMMENT = new BeancountTokenType("comment");
   IElementType COMMODITY = new BeancountTokenType("COMMODITY");
   IElementType CURRENCY = new BeancountTokenType("CURRENCY");
+  IElementType CUSTOM = new BeancountTokenType("CUSTOM");
   IElementType DATE = new BeancountTokenType("DATE");
   IElementType DIVIDE = new BeancountTokenType("DIVIDE");
   IElementType EOL = new BeancountTokenType("eol");
@@ -118,6 +121,9 @@ public interface BeancountTypes {
       }
       else if (type == COST_SPEC) {
         return new BeancountCostSpecImpl(node);
+      }
+      else if (type == CUSTOM_DIR) {
+        return new BeancountCustomDirImpl(node);
       }
       else if (type == DIRECTIVE) {
         return new BeancountDirectiveImpl(node);

@@ -53,6 +53,10 @@ public class BeancountVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitCustomDir(@NotNull BeancountCustomDir o) {
+    visitPsiElement(o);
+  }
+
   public void visitDirective(@NotNull BeancountDirective o) {
     visitPsiElement(o);
   }

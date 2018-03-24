@@ -14,6 +14,9 @@ public interface BeancountDirective extends PsiElement {
   BeancountCommodityDir getCommodityDir();
 
   @Nullable
+  BeancountCustomDir getCustomDir();
+
+  @Nullable
   BeancountEventDir getEventDir();
 
   @Nullable

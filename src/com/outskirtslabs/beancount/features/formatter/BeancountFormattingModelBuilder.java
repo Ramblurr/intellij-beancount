@@ -2,14 +2,9 @@ package com.outskirtslabs.beancount.features.formatter;
 
 import static com.outskirtslabs.beancount.psi.BeancountTypes.CURRENCY;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.DATE;
-import static com.outskirtslabs.beancount.psi.BeancountTypes.EVENT;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.EXPR;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.META_KEY;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.META_KV_DELIMITER;
-import static com.outskirtslabs.beancount.psi.BeancountTypes.OPEN;
-import static com.outskirtslabs.beancount.psi.BeancountTypes.OPTION;
-import static com.outskirtslabs.beancount.psi.BeancountTypes.PRICE;
-import static com.outskirtslabs.beancount.psi.BeancountTypes.TXN;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,26 +25,18 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.tree.TokenSet;
 import com.outskirtslabs.beancount.BeancountLanguage;
 import com.outskirtslabs.beancount.features.completion.AccountsCompleter;
 import com.outskirtslabs.beancount.psi.BeancountAmount;
 import com.outskirtslabs.beancount.psi.BeancountExpr;
 import com.outskirtslabs.beancount.psi.BeancountFile;
 import com.outskirtslabs.beancount.psi.BeancountTreeUtil;
+import com.outskirtslabs.beancount.psi.BeancountTypeUtil;
 import com.outskirtslabs.beancount.psi.BeancountTypes;
 
 public class BeancountFormattingModelBuilder implements FormattingModelBuilder
 {
     private static Logger LOG = Logger.getInstance(BeancountFormattingModelBuilder.class);
-    private final static TokenSet DIRECTIVE_KEYWORDS = TokenSet.create(
-        OPTION,
-        OPEN,
-        PRICE,
-        TXN,
-        EVENT,
-        PRICE
-    );
 
     @NotNull
     @Override
@@ -91,7 +78,7 @@ public class BeancountFormattingModelBuilder implements FormattingModelBuilder
             .spaces(1)
             .after(DATE)
             .spaces(1)
-            .after(DIRECTIVE_KEYWORDS)
+            .after(BeancountTypeUtil.DIRECTIVE_KEYWORDS)
             .spaces(1)
             .after(META_KEY)
             .none()

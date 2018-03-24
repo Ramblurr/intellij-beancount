@@ -53,6 +53,7 @@ import static com.outskirtslabs.beancount.BeancountLexerUtil.*;
 //EOL=\R
 WHITE_SPACE=\s+
 
+BOOLEAN=(TRUE|FALSE)
 NUMBER=[0-9]+(\.[0-9]*)?
 NEGATIVE_NUMBER=-{NUMBER}
 DATE=[:digit:]{4}-[:digit:]{2}-[:digit:]{2}
@@ -71,108 +72,116 @@ TAG_LINK_VAL=[A-Za-z0-9\-_/.]+
 ATAT="@@"
 AT="@"
 
-%state sOPT, sEVENT, sDATE_ENTRY, sOPEN, sBALANCE, sPRICE, sCOMMODITY, sMETA_LIST, sPOSTING, sACCOUNT
+%state sOPT, sEVENT, sDATE_ENTRY, sOPEN, sBALANCE, sPRICE, sCOMMODITY, sMETA_LIST, sPOSTING, sACCOUNT, sCUSTOM
 %xstate sTXN
 
 %%
 
 <sACCOUNT> {
-{LINE_SPACE}+      { yypopstate(); return WHITE_SPACE; }
-{EOL_SINGLE}      { yypushback(yylength()); yypopstate(); }
-":" { return COLON; }
-{ACCOUNT_WORD}             { return ACCOUNT_WORD; }
+{LINE_SPACE}+       { yypopstate(); return WHITE_SPACE; }
+{EOL_SINGLE}        { yypushback(yylength()); yypopstate(); }
+":"                 { return COLON; }
+{ACCOUNT_WORD}      { return ACCOUNT_WORD; }
 }
 
-^{LINE_SPACE}+{META_KEY}             {  yypushback(nonWsIndex(yytext())); yypushstate(sMETA_LIST); return INDENT; }
-{CURRENCY}             { return CURRENCY; }
+^{LINE_SPACE}+{META_KEY} {  yypushback(nonWsIndex(yytext())); yypushstate(sMETA_LIST); return INDENT; }
+{CURRENCY}          { return CURRENCY; }
 
 <sOPT, sEVENT, sPRICE> {
-{EOL} { yylogstate(YYINITIAL); return EOL; }
-{LINE_SPACE}+      { return WHITE_SPACE; }
-{STRING} { return STRING; }
+{EOL}               { yylogstate(YYINITIAL); return EOL; }
+{LINE_SPACE}+       { return WHITE_SPACE; }
+{STRING}            { return STRING; }
 }
 
 <sCOMMODITY> {
-{EOL} { yylogstate(YYINITIAL); return EOL; }
-{LINE_SPACE}+      { return WHITE_SPACE; }
+{EOL}               { yylogstate(YYINITIAL); return EOL; }
+{LINE_SPACE}+       { return WHITE_SPACE; }
 }
 <sBALANCE> {
-{EOL} { yylogstate(YYINITIAL); return EOL; }
-{LINE_SPACE}+      { return WHITE_SPACE; }
-{ACCOUNT_WORD} { yypushstate(sACCOUNT); return ACCOUNT_WORD; }
+{EOL}               { yylogstate(YYINITIAL); return EOL; }
+{LINE_SPACE}+       { return WHITE_SPACE; }
+{ACCOUNT_WORD}      { yypushstate(sACCOUNT); return ACCOUNT_WORD; }
 }
 <sOPEN> {
-{EOL} { yylogstate(YYINITIAL); return EOL; }
-{LINE_SPACE}+      { return WHITE_SPACE; }
-{ACCOUNT_WORD} { yypushstate(sACCOUNT); return ACCOUNT_WORD; }
+{EOL}               { yylogstate(YYINITIAL); return EOL; }
+{LINE_SPACE}+       { return WHITE_SPACE; }
+{ACCOUNT_WORD}      { yypushstate(sACCOUNT); return ACCOUNT_WORD; }
 }
 
 //<sTXN_TAG_LINK> {
 //    {TAG_LINK_VAL} { yypopstate(); return TAG_LINK_VALUE; }
 //}
 <sTXN> {
-"#" { return HASH; }
-"^" { return CARET; }
-{TAG_LINK_VAL} { return TAG_LINK_VALUE; }
-^{LINE_SPACE}+{META_KEY}             {  yypushback(nonWsIndex(yytext())); yypushstate(sMETA_LIST); return INDENT; }
-{EOL}{2} { yypopstate();  return EOL; }
-{EOL} { return EOL; }
+"#"                  { return HASH; }
+"^"                  { return CARET; }
+{TAG_LINK_VAL}       { return TAG_LINK_VALUE; }
+^{LINE_SPACE}+{META_KEY} {  yypushback(nonWsIndex(yytext())); yypushstate(sMETA_LIST); return INDENT; }
+{EOL}{2}             { yypopstate();  return EOL; }
+{EOL}                { return EOL; }
 ^{LINE_SPACE}+{ACCOUNT_WORD} { yypushback(nonWsIndex(yytext())); yypushstate(sPOSTING); yypushstate(sACCOUNT); return INDENT;}
-{LINE_SPACE}+      { return WHITE_SPACE; }
-{STRING}           { return STRING; }
-[^] { /*this effectively detects the last posting line*/ yypushback(yylength()); yypopstate(); }
+{LINE_SPACE}+        { return WHITE_SPACE; }
+{STRING}             { return STRING; }
+[^]                  { /*this effectively detects the last posting line*/ yypushback(yylength()); yypopstate(); }
 }
 <sMETA_LIST> {
-{META_KEY} { return META_KEY; }
-{LINE_SPACE}+      { return WHITE_SPACE; }
-":" { return META_KV_DELIMITER; }
-{EOL} { yypopstate(); return EOL; }
+{META_KEY}           { return META_KEY; }
+{LINE_SPACE}+        { return WHITE_SPACE; }
+":"                  { return META_KV_DELIMITER; }
+{EOL}                { yypopstate(); return EOL; }
 }
 
 
 <sPOSTING> {
-{LINE_SPACE}      { return WHITE_SPACE; }
-{EOL_SINGLE} { yypushback(yylength()); yypopstate(); }
+{LINE_SPACE}         { return WHITE_SPACE; }
+{EOL_SINGLE}         { yypushback(yylength()); yypopstate(); }
+}
+
+<sCUSTOM> {
+{ACCOUNT_WORD}       { yypushstate(sACCOUNT); return ACCOUNT_WORD; }
+{LINE_SPACE}+        { return WHITE_SPACE; }
+{EOL_SINGLE}         { yypushback(yylength()); yypopstate(); }
 }
 
 
 <sDATE_ENTRY> {
   {LINE_SPACE}+      { return WHITE_SPACE; }
-  "price"             { yylogstate(sPRICE); return PRICE; }
+  "price"            { yylogstate(sPRICE); return PRICE; }
   "open"             { yylogstate(sOPEN); return OPEN; }
   "balance"          { yylogstate(sBALANCE); return BALANCE; }
   "commodity"        { yylogstate(sCOMMODITY); return COMMODITY; }
   "event"            { yylogstate(sEVENT); return EVENT; }
-  "txn"|{FLAG}              { yylogstate(sTXN); return TXN; }
+  "txn"|{FLAG}       { yylogstate(sTXN); return TXN; }
+  "custom"           { yylogstate(sCUSTOM); return CUSTOM;}
 }
 
 <YYINITIAL> {
-  ^"option" { yylogstate(sOPT); return OPTION; }
-  ^{DATE} { yylogstate(sDATE_ENTRY); return DATE; }
-  {COMMENT}          { return COMMENT; }
-  {EOL}              { return EOL; }
+  ^"option"         { yylogstate(sOPT); return OPTION; }
+  ^{DATE}           { yylogstate(sDATE_ENTRY); return DATE; }
+  {COMMENT}         { return COMMENT; }
+  {EOL}             { return EOL; }
 }
 
-"{{" { return LCURLCURL; }
-"}}" { return RCURLCURL; }
-"{" { return LCURL; }
-"}" { return RCURL; }
-"," { return COMMA; }
-"#" { return HASH; }
-"@@" {return ATAT;}
-"@" {return AT;}
-"(" { return LPAREN; }
-")" { return RPAREN; }
-"-" { return MINUS; }
-\+  {return PLUS; }
-"/"  { return DIVIDE; }
-"*"  { return ASTERISK; }
-{DATE} { return DATE; }
-{NUMBER}           { return NUMBER; }
-{NEGATIVE_NUMBER}           { return NEGATIVE_NUMBER; }
-{STRING}           { return STRING; }
+"{{"                { return LCURLCURL; }
+"}}"                { return RCURLCURL; }
+"{"                 { return LCURL; }
+"}"                 { return RCURL; }
+","                 { return COMMA; }
+"#"                 { return HASH; }
+"@@"                { return ATAT;}
+"@"                 { return AT;}
+"("                 { return LPAREN; }
+")"                 { return RPAREN; }
+"-"                 { return MINUS; }
+\+                  { return PLUS; }
+"/"                 { return DIVIDE; }
+"*"                 { return ASTERISK; }
+{DATE}              { return DATE; }
+{NUMBER}            { return NUMBER; }
+{NEGATIVE_NUMBER}   { return NEGATIVE_NUMBER; }
+{STRING}            { return STRING; }
+{BOOLEAN}           { return BOOLEAN;}
 
-<sOPT, sEVENT, sDATE_ENTRY, sOPEN, sBALANCE, sCOMMODITY, sMETA_LIST, sPOSTING, sACCOUNT, sTXN, sPRICE>
+<sOPT, sEVENT, sDATE_ENTRY, sOPEN, sBALANCE, sCOMMODITY, sMETA_LIST, sPOSTING, sACCOUNT, sTXN, sPRICE, sCUSTOM>
 {
     [^] { return BAD_CHARACTER; }
 }
