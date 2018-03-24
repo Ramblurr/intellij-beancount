@@ -116,6 +116,7 @@ public class AccountTreeTest
         Set<String> build = tree.build();
         assertThat(build.toJavaList()).isEqualTo(manyAccounts.toJavaList());
     }
+
     @Test
     public void testBuildChildren()
     {
@@ -131,5 +132,31 @@ public class AccountTreeTest
         tree.addAccountPaths(fewAccounts);
         Set<String> build = tree.buildIntermediate();
         assertThat(build.toJavaList()).isEqualTo(fewAccountsAll.toJavaList());
+    }
+
+    @Test
+    public void testMaximumLengthSingle()
+    {
+        AccountTree tree = new AccountTree();
+        String a = "Assets:US:BofA";
+        tree.addAccountPaths(a);
+        assertThat(tree.lengthOfLongestAccount()).isEqualTo(a.length() - 2);
+    }
+
+    @Test
+    public void testMaximumLengthMultiple()
+    {
+        AccountTree tree = new AccountTree();
+        String a = "Assets:US:Bof";
+        String b = "Assets:Foo:Bar:DoubleBar";
+        String c = "Liabilities:Foo:Bar:DoubleBar:OMGOMG";
+        String d = "Assets:Foo:Joy:OMG:DoubleBar:Saloon:boop";
+        String e = "Assets:Foo:Joy:OMG:Car:Baloon";
+        tree.addAccountPaths(c);
+        tree.addAccountPaths(a);
+        tree.addAccountPaths(d);
+        tree.addAccountPaths(b);
+        tree.addAccountPaths(e);
+        assertThat(tree.lengthOfLongestAccount()).isEqualTo(d.replace(":", "").length());
     }
 }

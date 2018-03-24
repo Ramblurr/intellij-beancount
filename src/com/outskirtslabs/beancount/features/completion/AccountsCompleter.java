@@ -32,6 +32,13 @@ public class AccountsCompleter
              .forEach(tree::addAccountPaths);
     }
 
+    /**
+     * Get the length of the longest account string (including colons)
+     */
+    public int lengthOfLongestAccount() {
+        return tree.lengthOfLongestAccount();
+    }
+
     public Set<String> getPrefixMatches(String partialAccount)
     {
         if (partialAccount.endsWith(DUMMY_IDENT))

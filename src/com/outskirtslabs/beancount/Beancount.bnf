@@ -67,6 +67,9 @@ expr ::=
   | mul_group
   | unary_group
   | primary_group
+   { implements="com.outskirtslabs.beancount.psi.elements.BeancountExprElement"
+     mixin="com.outskirtslabs.beancount.psi.impl.BeancountExprElementImpl"
+   }
 
 private mul_group ::= mul_expr | div_expr
 private unary_group ::= unary_plus_expr | unary_min_expr

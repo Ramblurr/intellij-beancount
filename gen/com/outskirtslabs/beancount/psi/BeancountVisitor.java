@@ -5,6 +5,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiElement;
 import com.outskirtslabs.beancount.psi.elements.BeancountAccountElement;
+import com.outskirtslabs.beancount.psi.elements.BeancountExprElement;
 
 public class BeancountVisitor extends PsiElementVisitor {
 
@@ -65,7 +66,7 @@ public class BeancountVisitor extends PsiElementVisitor {
   }
 
   public void visitExpr(@NotNull BeancountExpr o) {
-    visitPsiElement(o);
+    visitExprElement(o);
   }
 
   public void visitKeyValue(@NotNull BeancountKeyValue o) {
@@ -145,6 +146,10 @@ public class BeancountVisitor extends PsiElementVisitor {
   }
 
   public void visitAccountElement(@NotNull BeancountAccountElement o) {
+    visitPsiElement(o);
+  }
+
+  public void visitExprElement(@NotNull BeancountExprElement o) {
     visitPsiElement(o);
   }
 

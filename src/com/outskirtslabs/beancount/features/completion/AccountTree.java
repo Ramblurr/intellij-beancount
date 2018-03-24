@@ -10,6 +10,10 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import com.intellij.openapi.diagnostic.Logger;
+
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
 import io.vavr.collection.HashSet;
 import io.vavr.collection.Iterator;
 import io.vavr.collection.List;
@@ -23,6 +27,7 @@ import io.vavr.control.Option;
  */
 public class AccountTree
 {
+    private static Logger LOG = Logger.getInstance(AccountTree.class);
     // the root accounts
     private TreeSet<Node> roots = TreeSet
         .of(Comparator.comparing(node -> node.path),
@@ -193,6 +198,11 @@ public class AccountTree
         return roots.flatMap(Node::buildIntermediate).toSortedSet();
     }
 
+    public int lengthOfLongestAccount()
+    {
+        return roots.map(Node::maximumLength).max().getOrElse(0);
+    }
+
     /**
      * List of account segments
      */
@@ -324,6 +334,35 @@ public class AccountTree
         public String toString()
         {
             return path;
+        }
+
+        public int maximumLength()
+        {
+            Tuple2<Integer, Integer> tuple2 = maximumLength(Tuple.of(0, 0));
+            return tuple2._2;
+        }
+
+        private Tuple2<Integer, Integer> maximumLengthLeaf(final Tuple2<Integer, Integer> currMax)
+        {
+            int subtreeCost = currMax._1 + path.length();
+            return currMax.map2(i -> currMax._2 < subtreeCost ? subtreeCost : i);
+        }
+
+        private Tuple2<Integer, Integer> maximumLengthIntermediate(
+            final Tuple2<Integer, Integer> currMax)
+        {
+            // add one to account for the :
+            Tuple2<Integer, Integer> currMaxLocal = currMax.update1(currMax._1 + path.length() + 1);
+            return this.children.foldLeft(currMaxLocal,
+                (cost, node) -> node.maximumLength(cost).update1(currMaxLocal._1));
+        }
+
+        private Tuple2<Integer, Integer> maximumLength(Tuple2<Integer, Integer> currMax)
+        {
+            if (this.children.isEmpty())
+                return maximumLengthLeaf(currMax);
+            else
+                return maximumLengthIntermediate(currMax);
         }
     }
 

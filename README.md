@@ -5,7 +5,8 @@ This is a plugin that adds support for [Beancount][bc] to JetBrains IDEs.
 Features:
 
 * Syntax highlighting
-* Completion
+* Account name completion
+* Formatting
 
 Roadmap:
 
