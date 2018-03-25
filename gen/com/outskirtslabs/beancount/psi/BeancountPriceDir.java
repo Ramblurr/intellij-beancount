@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface BeancountPriceDir extends PsiElement {
 
-  @NotNull
+  @Nullable
   BeancountAmount getAmount();
 
 }

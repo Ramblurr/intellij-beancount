@@ -27,15 +27,15 @@ public class BeancountBalanceDirImpl extends ASTWrapperPsiElement implements Bea
   }
 
   @Override
-  @NotNull
+  @Nullable
   public BeancountAccount getAccount() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, BeancountAccount.class));
+    return PsiTreeUtil.getChildOfType(this, BeancountAccount.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public BeancountAmount getAmount() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, BeancountAmount.class));
+    return PsiTreeUtil.getChildOfType(this, BeancountAmount.class);
   }
 
 }

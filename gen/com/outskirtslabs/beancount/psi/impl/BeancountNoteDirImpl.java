@@ -27,15 +27,15 @@ public class BeancountNoteDirImpl extends ASTWrapperPsiElement implements Beanco
   }
 
   @Override
-  @NotNull
+  @Nullable
   public BeancountAccount getAccount() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, BeancountAccount.class));
+    return PsiTreeUtil.getChildOfType(this, BeancountAccount.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getString() {
-    return notNullChild(findChildByType(STRING));
+    return findChildByType(STRING);
   }
 
 }

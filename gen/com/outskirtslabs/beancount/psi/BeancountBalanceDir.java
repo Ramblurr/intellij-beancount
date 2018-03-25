@@ -7,10 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface BeancountBalanceDir extends PsiElement {
 
-  @NotNull
+  @Nullable
   BeancountAccount getAccount();
 
-  @NotNull
+  @Nullable
   BeancountAmount getAmount();
 
 }

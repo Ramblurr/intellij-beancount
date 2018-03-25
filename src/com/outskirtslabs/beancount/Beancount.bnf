@@ -113,16 +113,16 @@ posting_price ::= (AT | ATAT) incomplete_amount
 posting_line ::= INDENT account amount cost_spec? posting_price? END metadata_list
 posting_list ::= posting_line*
 
-option_dir ::= OPTION STRING STRING END
-include_dir ::= INCLUDE STRING END
-price_dir ::= DATE PRICE CURRENCY amount END
-open_dir ::= DATE OPEN account CURRENCY? END
-balance_dir ::= DATE BALANCE account amount END
-commodity_dir ::= DATE COMMODITY CURRENCY END
-transaction_dir ::=  DATE (TXN|FLAG) STRING? STRING? tag_link* END metadata_list posting_list
-event_dir ::= DATE EVENT STRING STRING END
-custom_dir ::= DATE CUSTOM STRING (account|STRING|DATE|amount|expr|BOOLEAN)* END
-pad_dir ::= DATE PAD account account END
-note_dir ::= DATE NOTE account STRING END
-document_dir ::= DATE DOCUMENT account STRING END
-query_dir ::= DATE QUERY STRING STRING END
+option_dir ::= OPTION STRING STRING END {pin=1}
+include_dir ::= INCLUDE STRING END {pin=1}
+price_dir ::= DATE PRICE CURRENCY amount END {pin=2}
+open_dir ::= DATE OPEN account CURRENCY? END {pin=2}
+balance_dir ::= DATE BALANCE account amount END {pin=2}
+commodity_dir ::= DATE COMMODITY CURRENCY END  {pin=2}
+transaction_dir ::=  DATE (TXN|FLAG) STRING? STRING? tag_link* END metadata_list posting_list  {pin=2}
+event_dir ::= DATE EVENT STRING STRING END {pin=2}
+custom_dir ::= DATE CUSTOM STRING (account|STRING|DATE|amount|expr|BOOLEAN)* END {pin=2}
+pad_dir ::= DATE PAD account account END {pin=2}
+note_dir ::= DATE NOTE account STRING END {pin=2}
+document_dir ::= DATE DOCUMENT account STRING END {pin=2}
+query_dir ::= DATE QUERY STRING STRING END {pin=2}

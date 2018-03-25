@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface BeancountIncludeDir extends PsiElement {
 
-  @NotNull
+  @Nullable
   PsiElement getString();
 
 }

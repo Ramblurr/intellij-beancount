@@ -27,9 +27,9 @@ public class BeancountIncludeDirImpl extends ASTWrapperPsiElement implements Bea
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getString() {
-    return notNullChild(findChildByType(STRING));
+    return findChildByType(STRING);
   }
 
 }

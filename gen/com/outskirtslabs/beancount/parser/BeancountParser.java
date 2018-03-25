@@ -227,14 +227,15 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   public static boolean balance_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "balance_dir")) return false;
     if (!nextTokenIs(b, DATE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, DATE, BALANCE);
-    r = r && account(b, l + 1);
-    r = r && amount(b, l + 1);
-    r = r && END(b, l + 1);
-    exit_section_(b, m, BALANCE_DIR, r);
-    return r;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, BALANCE_DIR, null);
+    r = consumeTokens(b, 2, DATE, BALANCE);
+    p = r; // pin = 2
+    r = r && report_error_(b, account(b, l + 1));
+    r = p && report_error_(b, amount(b, l + 1)) && r;
+    r = p && END(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -304,12 +305,13 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   public static boolean commodity_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "commodity_dir")) return false;
     if (!nextTokenIs(b, DATE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, DATE, COMMODITY, CURRENCY);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, COMMODITY_DIR, null);
+    r = consumeTokens(b, 2, DATE, COMMODITY, CURRENCY);
+    p = r; // pin = 2
     r = r && END(b, l + 1);
-    exit_section_(b, m, COMMODITY_DIR, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -438,13 +440,14 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   public static boolean custom_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "custom_dir")) return false;
     if (!nextTokenIs(b, DATE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, DATE, CUSTOM, STRING);
-    r = r && custom_dir_3(b, l + 1);
-    r = r && END(b, l + 1);
-    exit_section_(b, m, CUSTOM_DIR, r);
-    return r;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, CUSTOM_DIR, null);
+    r = consumeTokens(b, 2, DATE, CUSTOM, STRING);
+    p = r; // pin = 2
+    r = r && report_error_(b, custom_dir_3(b, l + 1));
+    r = p && END(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // (account|STRING|DATE|amount|expr|BOOLEAN)*
@@ -511,14 +514,15 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   public static boolean document_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "document_dir")) return false;
     if (!nextTokenIs(b, DATE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, DATE, DOCUMENT);
-    r = r && account(b, l + 1);
-    r = r && consumeToken(b, STRING);
-    r = r && END(b, l + 1);
-    exit_section_(b, m, DOCUMENT_DIR, r);
-    return r;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, DOCUMENT_DIR, null);
+    r = consumeTokens(b, 2, DATE, DOCUMENT);
+    p = r; // pin = 2
+    r = r && report_error_(b, account(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, STRING)) && r;
+    r = p && END(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -526,12 +530,13 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   public static boolean event_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "event_dir")) return false;
     if (!nextTokenIs(b, DATE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, DATE, EVENT, STRING, STRING);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, EVENT_DIR, null);
+    r = consumeTokens(b, 2, DATE, EVENT, STRING, STRING);
+    p = r; // pin = 2
     r = r && END(b, l + 1);
-    exit_section_(b, m, EVENT_DIR, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -539,12 +544,13 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   public static boolean include_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "include_dir")) return false;
     if (!nextTokenIs(b, INCLUDE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, INCLUDE, STRING);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, INCLUDE_DIR, null);
+    r = consumeTokens(b, 1, INCLUDE, STRING);
+    p = r; // pin = 1
     r = r && END(b, l + 1);
-    exit_section_(b, m, INCLUDE_DIR, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -690,14 +696,15 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   public static boolean note_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "note_dir")) return false;
     if (!nextTokenIs(b, DATE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, DATE, NOTE);
-    r = r && account(b, l + 1);
-    r = r && consumeToken(b, STRING);
-    r = r && END(b, l + 1);
-    exit_section_(b, m, NOTE_DIR, r);
-    return r;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, NOTE_DIR, null);
+    r = consumeTokens(b, 2, DATE, NOTE);
+    p = r; // pin = 2
+    r = r && report_error_(b, account(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, STRING)) && r;
+    r = p && END(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -705,14 +712,15 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   public static boolean open_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "open_dir")) return false;
     if (!nextTokenIs(b, DATE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, DATE, OPEN);
-    r = r && account(b, l + 1);
-    r = r && open_dir_3(b, l + 1);
-    r = r && END(b, l + 1);
-    exit_section_(b, m, OPEN_DIR, r);
-    return r;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, OPEN_DIR, null);
+    r = consumeTokens(b, 2, DATE, OPEN);
+    p = r; // pin = 2
+    r = r && report_error_(b, account(b, l + 1));
+    r = p && report_error_(b, open_dir_3(b, l + 1)) && r;
+    r = p && END(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // CURRENCY?
@@ -727,12 +735,13 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   public static boolean option_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "option_dir")) return false;
     if (!nextTokenIs(b, OPTION)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, OPTION, STRING, STRING);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, OPTION_DIR, null);
+    r = consumeTokens(b, 1, OPTION, STRING, STRING);
+    p = r; // pin = 1
     r = r && END(b, l + 1);
-    exit_section_(b, m, OPTION_DIR, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -740,14 +749,15 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   public static boolean pad_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "pad_dir")) return false;
     if (!nextTokenIs(b, DATE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, DATE, PAD);
-    r = r && account(b, l + 1);
-    r = r && account(b, l + 1);
-    r = r && END(b, l + 1);
-    exit_section_(b, m, PAD_DIR, r);
-    return r;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, PAD_DIR, null);
+    r = consumeTokens(b, 2, DATE, PAD);
+    p = r; // pin = 2
+    r = r && report_error_(b, account(b, l + 1));
+    r = p && report_error_(b, account(b, l + 1)) && r;
+    r = p && END(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -826,13 +836,14 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   public static boolean price_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "price_dir")) return false;
     if (!nextTokenIs(b, DATE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, DATE, PRICE, CURRENCY);
-    r = r && amount(b, l + 1);
-    r = r && END(b, l + 1);
-    exit_section_(b, m, PRICE_DIR, r);
-    return r;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, PRICE_DIR, null);
+    r = consumeTokens(b, 2, DATE, PRICE, CURRENCY);
+    p = r; // pin = 2
+    r = r && report_error_(b, amount(b, l + 1));
+    r = p && END(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -840,12 +851,13 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   public static boolean query_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "query_dir")) return false;
     if (!nextTokenIs(b, DATE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, DATE, QUERY, STRING, STRING);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, QUERY_DIR, null);
+    r = consumeTokens(b, 2, DATE, QUERY, STRING, STRING);
+    p = r; // pin = 2
     r = r && END(b, l + 1);
-    exit_section_(b, m, QUERY_DIR, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -878,18 +890,19 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   public static boolean transaction_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "transaction_dir")) return false;
     if (!nextTokenIs(b, DATE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, TRANSACTION_DIR, null);
     r = consumeToken(b, DATE);
     r = r && transaction_dir_1(b, l + 1);
-    r = r && transaction_dir_2(b, l + 1);
-    r = r && transaction_dir_3(b, l + 1);
-    r = r && transaction_dir_4(b, l + 1);
-    r = r && END(b, l + 1);
-    r = r && metadata_list(b, l + 1);
-    r = r && posting_list(b, l + 1);
-    exit_section_(b, m, TRANSACTION_DIR, r);
-    return r;
+    p = r; // pin = 2
+    r = r && report_error_(b, transaction_dir_2(b, l + 1));
+    r = p && report_error_(b, transaction_dir_3(b, l + 1)) && r;
+    r = p && report_error_(b, transaction_dir_4(b, l + 1)) && r;
+    r = p && report_error_(b, END(b, l + 1)) && r;
+    r = p && report_error_(b, metadata_list(b, l + 1)) && r;
+    r = p && posting_list(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // TXN|FLAG

@@ -27,9 +27,9 @@ public class BeancountOpenDirImpl extends ASTWrapperPsiElement implements Beanco
   }
 
   @Override
-  @NotNull
+  @Nullable
   public BeancountAccount getAccount() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, BeancountAccount.class));
+    return PsiTreeUtil.getChildOfType(this, BeancountAccount.class);
   }
 
 }

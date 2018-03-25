@@ -33,9 +33,9 @@ public class BeancountTransactionDirImpl extends ASTWrapperPsiElement implements
   }
 
   @Override
-  @NotNull
+  @Nullable
   public BeancountPostingList getPostingList() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, BeancountPostingList.class));
+    return PsiTreeUtil.getChildOfType(this, BeancountPostingList.class);
   }
 
   @Override

@@ -10,7 +10,7 @@ public interface BeancountTransactionDir extends PsiElement {
   @NotNull
   List<BeancountKeyValue> getKeyValueList();
 
-  @NotNull
+  @Nullable
   BeancountPostingList getPostingList();
 
   @NotNull

@@ -27,9 +27,9 @@ public class BeancountPriceDirImpl extends ASTWrapperPsiElement implements Beanc
   }
 
   @Override
-  @NotNull
+  @Nullable
   public BeancountAmount getAmount() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, BeancountAmount.class));
+    return PsiTreeUtil.getChildOfType(this, BeancountAmount.class);
   }
 
 }
