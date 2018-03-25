@@ -1,5 +1,6 @@
 package com.outskirtslabs.beancount.psi;
 
+import static com.outskirtslabs.beancount.psi.BeancountTypes.BALANCE;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.CUSTOM;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.DOCUMENT;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.EVENT;
@@ -17,19 +18,18 @@ import com.intellij.psi.tree.TokenSet;
 public class BeancountTypeUtil
 {
     public final static TokenSet DIRECTIVE_KEYWORDS = TokenSet.create(
-        OPTION,
-        OPEN,
-        PRICE,
-        TXN,
-        EVENT,
-        PRICE,
+        BALANCE,
         CUSTOM,
-        PAD,
-        QUERY,
         DOCUMENT,
+        EVENT,
+        INCLUDE,
         NOTE,
-        INCLUDE
-
+        OPEN,
+        OPTION,
+        PAD,
+        PRICE,
+        QUERY,
+        TXN
     );
 
 }

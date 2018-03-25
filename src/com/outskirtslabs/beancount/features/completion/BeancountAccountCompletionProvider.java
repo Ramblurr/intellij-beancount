@@ -1,7 +1,6 @@
 package com.outskirtslabs.beancount.features.completion;
 
-import static com.outskirtslabs.beancount.psi.BeancountTreeUtil.getGrandGrandParent;
-import static com.outskirtslabs.beancount.psi.BeancountTreeUtil.getGrandParent;
+import static com.outskirtslabs.beancount.psi.BeancountTreeUtil.debugTree;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,29 +38,6 @@ public class BeancountAccountCompletionProvider extends CompletionProvider<Compl
 
     }
 
-    private void debugElement(String label, PsiElement element)
-    {
-        if (element != null)
-        {
-            log.info("{}: {} \"{}\" refs: {}",
-                label,
-                element.getClass().getSimpleName(),
-                element.getText().substring(0, Math.min(element.getTextLength(), 100)),
-                element.getReferences());
-        }
-    }
-
-    private void debugTree(PsiElement position)
-    {
-        PsiElement parent = position.getParent();
-        PsiElement grandp = getGrandParent(position);
-        PsiElement ggrandp = getGrandGrandParent(position);
-
-        debugElement("position", position);
-        debugElement("parent", parent);
-        debugElement("grandp", grandp);
-        debugElement("ggrandp", ggrandp);
-    }
 
     private void addPrefixAccountNameCompletions(PsiElement position, BeancountFile file,
         CompletionResultSet resultSet)

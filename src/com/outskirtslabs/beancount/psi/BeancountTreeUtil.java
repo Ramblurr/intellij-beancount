@@ -14,7 +14,9 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 
 import io.vavr.control.Option;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class BeancountTreeUtil
 {
 
@@ -160,6 +162,30 @@ public class BeancountTreeUtil
         return Stream.iterate(
             Optional.ofNullable(element),
             prev -> prev.map(e -> Optional.ofNullable(e.getParent())).orElse(Optional.empty()));
+    }
+
+    public static void debugElement(String label, PsiElement element)
+    {
+        if (element != null)
+        {
+            log.info("{}: {} \"{}\" refs: {}",
+                label,
+                element.getClass().getSimpleName(),
+                element.getText().substring(0, Math.min(element.getTextLength(), 100)),
+                element.getReferences());
+        }
+    }
+
+    public static void debugTree(PsiElement position)
+    {
+        PsiElement parent = position.getParent();
+        PsiElement grandp = getGrandParent(position);
+        PsiElement ggrandp = getGrandGrandParent(position);
+
+        debugElement("position", position);
+        debugElement("parent", parent);
+        debugElement("grandp", grandp);
+        debugElement("ggrandp", ggrandp);
     }
 }
 
