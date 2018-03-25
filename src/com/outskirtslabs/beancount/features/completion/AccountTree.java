@@ -28,15 +28,20 @@ import io.vavr.control.Option;
 public class AccountTree
 {
     private static Logger LOG = Logger.getInstance(AccountTree.class);
+    // root here functions as a sentinel
+    private static final Node ROOT = new Node("ROOT", null);
     // the root accounts
     private TreeSet<Node> roots = TreeSet
         .of(Comparator.comparing(node -> node.path),
-            Node.of("Assets"),
-            Node.of("Income"),
-            Node.of("Liabilities"),
-            Node.of("Equity"),
-            Node.of("Expenses"));
+            Node.of("Assets", ROOT),
+            Node.of("Income", ROOT),
+            Node.of("Liabilities", ROOT),
+            Node.of("Equity", ROOT),
+            Node.of("Expenses", ROOT));
 
+    public Set<Node> getRoots() {
+        return roots;
+    }
     public Option<Node> getRoot(String path)
     {
         return roots.find(n -> StringUtils.equals(path, n.path));
@@ -55,7 +60,7 @@ public class AccountTree
         Option<Node> maybeNode = getRoot(path);
         if (maybeNode.isDefined())
             return maybeNode.get();
-        Node node = new Node(path);
+        Node node = new Node(path, ROOT);
         roots = roots.add(node);
         return node;
     }
@@ -173,8 +178,7 @@ public class AccountTree
 
     Tree<Node> toTree()
     {
-        Node root = Node.of("ROOT");
-        return Tree.of(root, roots.toList().map(Node::toTree));
+        return Tree.of(ROOT, roots.toList().map(Node::toTree));
     }
 
     /**
@@ -220,23 +224,28 @@ public class AccountTree
 
     public static class Node
     {
-        String path;
+        final Node parent;
+        final String path;
         Set<Node> children = HashSet.empty();
 
-        public Node(final String path)
+        public Node(final String path, Node parent)
         {
             this.path = path;
+            this.parent = parent;
         }
 
-        public Node(final String path, final Set<Node> children)
+        public static Node of(final String path, final Node parent)
         {
-            this.path = path;
-            this.children = children;
+            return new Node(path, parent);
         }
 
-        public static Node of(final String path)
+        Option<Node> getParent()
         {
-            return new Node(path);
+            if (this.parent == ROOT)
+            {
+                return Option.none();
+            }
+            return Option.of(parent);
         }
 
         Option<Node> getChild(String path)
@@ -256,7 +265,7 @@ public class AccountTree
 
         public Node addChild(String path)
         {
-            Node node = new Node(path);
+            Node node = new Node(path, this);
             children = this.children.add(node);
             return node;
         }
@@ -268,7 +277,7 @@ public class AccountTree
 
         public Set<String> build()
         {
-            return build(true, false, HashSet.empty(), new StringBuilder().append(path));
+            return build(true, false, HashSet.empty(), new StringBuilder(path));
         }
 
         public Set<String> buildChildrenIntermediate()
@@ -276,9 +285,22 @@ public class AccountTree
             return build(true, true, HashSet.empty(), new StringBuilder());
         }
 
+        public Set<String> buildIntermediateWithParents()
+        {
+            Option<Node> parent = getParent();
+            List<String> ancestors = List.empty();
+            while (parent.isDefined())
+            {
+                ancestors = ancestors.append(parent.get().path);
+                parent = parent.get().getParent();
+            }
+            String prefix = StringUtils.join(ancestors.reverse(), ":");
+            return build(false, true, HashSet.empty(), new StringBuilder(prefix));
+        }
+
         public Set<String> buildIntermediate()
         {
-            return build(true, true, HashSet.of(path), new StringBuilder().append(path));
+            return build(true, true, HashSet.of(path), new StringBuilder(path));
         }
 
         private Set<String> build(boolean isFirst, boolean withIntermediates, Set<String> accum,
@@ -304,30 +326,6 @@ public class AccountTree
             if (children.isSingleValued())
                 return Tree.of(this);
             return Tree.of(this, children.map(Node::toTree));
-        }
-
-        @Override
-        public boolean equals(final Object o)
-        {
-            if (this == o) return true;
-
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Node node = (Node) o;
-
-            return new EqualsBuilder()
-                .append(path, node.path)
-                .append(children, node.children)
-                .isEquals();
-        }
-
-        @Override
-        public int hashCode()
-        {
-            return new HashCodeBuilder(17, 37)
-                .append(path)
-                .append(children)
-                .toHashCode();
         }
 
         @Override
@@ -363,6 +361,30 @@ public class AccountTree
                 return maximumLengthLeaf(currMax);
             else
                 return maximumLengthIntermediate(currMax);
+        }
+
+        @Override
+        public boolean equals(final Object o)
+        {
+            if (this == o) return true;
+
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Node node = (Node) o;
+
+            return new EqualsBuilder()
+                .append(path, node.path)
+                .append(children, node.children)
+                .isEquals() && parent == node.parent;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return new HashCodeBuilder(17, 37)
+                .append(path)
+                .append(children)
+                .toHashCode();
         }
     }
 

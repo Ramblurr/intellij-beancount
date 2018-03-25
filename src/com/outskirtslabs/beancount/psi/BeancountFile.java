@@ -8,16 +8,17 @@ import org.jetbrains.annotations.NotNull;
 
 import com.google.common.base.Stopwatch;
 import com.intellij.extapi.psi.PsiFileBase;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import com.outskirtslabs.beancount.BeancountFileType;
 import com.outskirtslabs.beancount.BeancountLanguage;
+import com.outskirtslabs.beancount.psi.stub.index.AccountStubIndex;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class BeancountFile extends PsiFileBase
 {
-    private static Logger LOG = Logger.getInstance(BeancountFile.class);
-
     public BeancountFile(@NotNull FileViewProvider viewProvider)
     {
         super(viewProvider, BeancountLanguage.INSTANCE);
@@ -55,7 +56,7 @@ public class BeancountFile extends PsiFileBase
     public Stream<String> getAllAccountNames()
     {
 //        Stream<BeancountAccount> accounts = Arrays.stream(this.getChildren())
-//                                                  .peek( e -> LOG.info("\t " + e.getClass().getName()))
+//                                                  .peek( e -> log.info("\t " + e.getClass().getName()))
 //                                                  .filter(e -> e instanceof BeancountAccount)
 //                                                  .map(e -> (BeancountAccount) e)
 //                                                  .distinct();
@@ -96,6 +97,15 @@ public class BeancountFile extends PsiFileBase
         return names.stream();
     }
 
+    public Stream<String> getAllAccountsCached()
+    {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Stream<String> distinct = AccountStubIndex.findAllAccounts(this.getProject()).stream()
+                                                  .distinct();
+        log.info("getAllAccountsCached complete in {}", stopwatch.elapsed(TimeUnit.MICROSECONDS));
+        return distinct;
+    }
+
     public Stream<String> getAllAccounts()
     {
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -109,7 +119,7 @@ public class BeancountFile extends PsiFileBase
             }
         });
 
-        LOG.info("getAllAccounts complete in " + stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        log.info("getAllAccounts complete in {}", stopwatch.elapsed(TimeUnit.MICROSECONDS));
         return names.stream();
     }
 }

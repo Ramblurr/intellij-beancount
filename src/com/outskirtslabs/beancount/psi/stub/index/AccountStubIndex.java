@@ -38,6 +38,19 @@ public class AccountStubIndex extends StringStubIndexExtension<BeancountAccount>
         );
     }
 
+    public static Collection<String> findAllAccounts(Project project)
+    {
+        if (DumbService.isDumb(project))
+        {
+            // idea is indexing
+            return Collections.emptyList();
+        }
+
+        GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+        return StubIndex.getInstance()
+                 .getAllKeys(BeancountAccountKeyIndex.KEY, project);
+    }
+
     @Override
     public int getVersion()
     {

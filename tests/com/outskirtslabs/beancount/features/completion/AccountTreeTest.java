@@ -4,6 +4,7 @@ import static org.fest.assertions.Assertions.assertThat;
 
 import org.junit.Test;
 
+import io.vavr.collection.HashSet;
 import io.vavr.collection.List;
 import io.vavr.collection.Set;
 import io.vavr.collection.TreeSet;
@@ -65,11 +66,13 @@ public class AccountTreeTest
     @Test
     public void getRoot()
     {
+
+        AccountTree.Node ROOT = new AccountTree.Node("ROOT", null);
         AccountTree tree = new AccountTree();
-        assertThat(tree.getOrCreateRoot("Assets")).isEqualTo(new AccountTree.Node("Assets"));
-        assertThat(tree.getOrCreateRoot("Liabilities"))
-            .isEqualTo(new AccountTree.Node("Liabilities"));
-        assertThat(tree.getOrCreateRoot("OMG")).isEqualTo(new AccountTree.Node("OMG"));
+        assertThat(tree.getOrCreateRoot("Assets").path)
+            .isEqualTo(new AccountTree.Node("Assets", null).path);
+        assertThat(tree.getOrCreateRoot("OMG").path)
+            .isEqualTo(new AccountTree.Node("OMG", ROOT).path);
     }
 
     @Test
@@ -106,6 +109,23 @@ public class AccountTreeTest
 
         node = tree.getFinalNode("Assets:").get();
         assertThat(node.getPath()).isEqualTo("Assets");
+    }
+
+    @Test
+    public void buildIntermediateWithParents()
+    {
+        AccountTree tree = new AccountTree();
+        tree.addAccountPaths("Assets:US:BofA:Checking");
+
+        AccountTree.Node node = tree.getFinalNode("Assets:US:BofA").get();
+        assertThat(node.getPath()).isEqualTo("US");
+
+        assertThat(node.buildIntermediateWithParents().toJavaSet())
+            .isEqualTo(HashSet.of(
+                "Assets:US:BofA:Checking",
+                "Assets:US:BofA",
+                "Assets:US"
+            ).toJavaSet());
     }
 
     @Test

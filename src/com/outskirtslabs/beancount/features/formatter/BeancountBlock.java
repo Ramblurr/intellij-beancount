@@ -66,9 +66,9 @@ public class BeancountBlock extends AbstractBlock
         {
             IElementType childType = child.getElementType();
             if (childType == TokenType.WHITE_SPACE) continue;
-            if (childType == BeancountTypes.SKIP) continue;
-            if (childType == BeancountTypes.COMMENT) continue;
-            if (child.getTextRange().getLength() == 0) continue;
+//            if (childType == BeancountTypes.SKIP) continue;
+//            if (childType == BeancountTypes.COMMENT) continue;
+//            if (child.getTextRange().getLength() == 0) continue;
 
             addChildBlocks(child, blocks);
         }

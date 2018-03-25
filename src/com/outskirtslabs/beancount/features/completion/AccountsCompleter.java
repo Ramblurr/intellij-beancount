@@ -24,22 +24,25 @@ public class AccountsCompleter
 
     public AccountsCompleter(BeancountFile file)
     {
-        this.reset(file.getAllAccounts());
+//        this.reset(file.getAllAccounts());
+        this.reset(file.getAllAccountsCached());
     }
 
     private void reset(Stream<String> paths)
     {
         Stopwatch stopwatch = Stopwatch.createStarted();
         tree = new AccountTree();
-        paths.filter(s -> !StringUtils.equals(s, DUMMY_IDENT) || StringUtils.isBlank(s))
+        paths.filter(s -> !StringUtils.endsWith(s, DUMMY_IDENT) && AccountTree.isValidAccountString(s))
+             .distinct()
              .forEach(tree::addAccountPaths);
-        LOG.info("index complete in " + stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        LOG.info("index complete in " + stopwatch.elapsed(TimeUnit.MICROSECONDS));
     }
 
     /**
      * Get the length of the longest account string (including colons)
      */
-    public int lengthOfLongestAccount() {
+    public int lengthOfLongestAccount()
+    {
         return tree.lengthOfLongestAccount();
     }
 
@@ -54,12 +57,25 @@ public class AccountsCompleter
             // handle "<cursor>"
             return tree.buildIntermediate().toJavaSet();
         }
-        Option<AccountTree.Node> node = tree.getFinalNode(partialAccount);
-        if (node.isEmpty())
-            return new TreeSet<>();
 
-        AccountTree.Node node1 = node.get();
-        return node1.buildChildrenIntermediate().toJavaSet();
+        if (!partialAccount.contains(":"))
+        {
+            // todo partial root path completion
+            return tree.getRoots()
+                       .map(AccountTree.Node::getPath)
+                       .map(s -> s + ":")
+                       .toJavaSet();
+        } else
+        {
+
+            Option<AccountTree.Node> node = tree.getFinalNode(partialAccount);
+            if (node.isEmpty())
+                return new TreeSet<>();
+
+            AccountTree.Node node1 = node.get();
+            return node1.buildIntermediateWithParents().toJavaSet();
+        }
+
     }
 
 }

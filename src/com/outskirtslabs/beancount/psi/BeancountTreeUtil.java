@@ -47,6 +47,19 @@ public class BeancountTreeUtil
         return Option.of(sibling);
     }
 
+    public static io.vavr.collection.List<PsiElement> getPreviousSiblingsWhile(PsiElement element,
+        Predicate<PsiElement> predicate)
+    {
+        PsiElement sibling = element.getPrevSibling();
+        io.vavr.collection.List<PsiElement> objects = io.vavr.collection.List.empty();
+        while (sibling != null && predicate.test(sibling))
+        {
+            objects = objects.append(sibling);
+            sibling = sibling.getPrevSibling();
+        }
+        return objects.reverse();
+    }
+
     public static boolean isAnyChildOfType(PsiElement element, IElementType type)
     {
         return BeancountTreeUtil.isAnyMatchInChildren(element, e -> isElementOfType(e, type));
