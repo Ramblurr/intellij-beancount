@@ -19,6 +19,7 @@ public class BeancountColorSettingsPage implements ColorSettingsPage
     private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[] {
         new AttributesDescriptor("Inflows", BeancountSyntaxHighlighter.NUMBER),
         new AttributesDescriptor("Outflows", BeancountSyntaxHighlighter.NEGATIVE_NUMBER),
+        new AttributesDescriptor("Currency", BeancountSyntaxHighlighter.CURRENCY),
         new AttributesDescriptor("Account Names", BeancountSyntaxHighlighter.IDENT),
         new AttributesDescriptor("Strings", BeancountSyntaxHighlighter.STRING),
         new AttributesDescriptor("Metadata key", BeancountSyntaxHighlighter.META_KEY),

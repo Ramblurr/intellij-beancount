@@ -18,18 +18,19 @@ import com.outskirtslabs.beancount.psi.BeancountTypes;
 public class BeancountSyntaxHighlighter extends SyntaxHighlighterBase
 {
     // @formatter:off
-    public static final TextAttributesKey ACCOUNT_DELIM = createTextAttributesKey("BEANCOUNT_SEPARATOR", DefaultLanguageHighlighterColors.OPERATION_SIGN);
-    private static final TextAttributesKey[] ACCOUNT_DELIM_KEYS = new TextAttributesKey[] { ACCOUNT_DELIM };
     public static final TextAttributesKey BAD_CHARACTER = createTextAttributesKey("BEANCOUNT_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER);
     private static final TextAttributesKey[] BAD_CHAR_KEYS = new TextAttributesKey[] { BAD_CHARACTER };
     public static final TextAttributesKey COMMENT = createTextAttributesKey("BEANCOUNT_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT);
     private static final TextAttributesKey[] COMMENT_KEYS = new TextAttributesKey[] { COMMENT };
-    public static final TextAttributesKey DATE = createTextAttributesKey("BEANCOUNT_DATE", HighlighterColors.TEXT);
+    public static final TextAttributesKey DATE = createTextAttributesKey("BEANCOUNT_DATE", DefaultLanguageHighlighterColors.CONSTANT);
     private static final TextAttributesKey[] DATE_KEYS = new TextAttributesKey[] { DATE };
     public static final TextAttributesKey FLAG = createTextAttributesKey("FLAG", DefaultLanguageHighlighterColors.KEYWORD);
     private static final TextAttributesKey[] FLAG_KEYS = new TextAttributesKey[] { FLAG };
     public static final TextAttributesKey IDENT = createTextAttributesKey("BEANCOUNT_IDENT", DefaultLanguageHighlighterColors.IDENTIFIER);
     private static final TextAttributesKey[] IDENT_KEYS = new TextAttributesKey[] { IDENT };
+
+    public static final TextAttributesKey CURRENCY = createTextAttributesKey("BEANCOUNT_IDENT", DefaultLanguageHighlighterColors.IDENTIFIER);
+    private static final TextAttributesKey[] CURRENCY_KEYS = new TextAttributesKey[] { CURRENCY};
     public static final TextAttributesKey DIRECTIVE = createTextAttributesKey("BEANCOUNT_DIRECTIVE", DefaultLanguageHighlighterColors.KEYWORD);
     private static final TextAttributesKey[] DIRECTIVE_KEYS = new TextAttributesKey[] { DIRECTIVE };
     public static final TextAttributesKey META_KEY = createTextAttributesKey("BEANCOUNT_META_KEY", DefaultLanguageHighlighterColors.LINE_COMMENT);
@@ -57,26 +58,24 @@ public class BeancountSyntaxHighlighter extends SyntaxHighlighterBase
     @Override
     public TextAttributesKey[] getTokenHighlights(IElementType tokenType)
     {
-        if (BeancountTypeUtil.DIRECTIVE_KEYWORDS.contains(tokenType))
+        if (tokenType.equals(BeancountTypes.CURRENCY))
+            return CURRENCY_KEYS;
+        else if (BeancountTypeUtil.DIRECTIVE_KEYWORDS.contains(tokenType))
             return DIRECTIVE_KEYS;
+        if (BeancountTypeUtil.ACCOUNT_TOKENS.contains(tokenType))
+            return IDENT_KEYS;
         else if (tokenType.equals(BeancountTypes.COMMENT))
             return COMMENT_KEYS;
-        else if (tokenType.equals(BeancountTypes.ACCOUNT_NAME))
-            return IDENT_KEYS;
         else if (tokenType.equals(BeancountTypes.NEGATIVE_NUMBER))
             return NEGATIVE_NUMBER_KEYS;
         else if (tokenType.equals(BeancountTypes.NUMBER))
             return NUMBER_KEYS;
-        else if (tokenType.equals(BeancountTypes.META_KEY))
-            return COMMENT_KEYS;
         else if (tokenType.equals(BeancountTypes.STRING))
             return STRING_KEYS;
         else if (tokenType.equals(BeancountTypes.DATE))
             return DATE_KEYS;
         else if (tokenType.equals(BeancountTypes.FLAG))
             return FLAG_KEYS;
-        else if (tokenType.equals(BeancountTypes.ACCOUNT_DELIMITER))
-            return ACCOUNT_DELIM_KEYS;
         else if (tokenType.equals(BeancountTypes.META_KEY))
             return META_KEYS;
         else if (tokenType.equals(TokenType.BAD_CHARACTER))
