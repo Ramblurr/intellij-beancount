@@ -9,6 +9,7 @@ import static com.outskirtslabs.beancount.psi.BeancountTypes.NOTE;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.OPEN;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.OPTION;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.PAD;
+import static com.outskirtslabs.beancount.psi.BeancountTypes.PLUGIN;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.PRICE;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.QUERY;
 import static com.outskirtslabs.beancount.psi.BeancountTypes.TXN;
@@ -27,6 +28,7 @@ public class BeancountTypeUtil
         OPEN,
         OPTION,
         PAD,
+        PLUGIN,
         PRICE,
         QUERY,
         TXN

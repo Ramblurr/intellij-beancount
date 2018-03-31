@@ -31,7 +31,7 @@
 
 beancountFile ::=  blank* item*
 
-private item ::=  !<<eof>>  (metadata_carrier|option_dir|include_dir|blank)
+private item ::=  !<<eof>>  (metadata_carrier|option_dir|include_dir|plugin_dir|blank)
 private END ::= EOL | <<eof>>
 private blank ::= comment eol | eol | skip | ASTERISK | DIVIDE | PLUS
     | LPAREN | RPAREN | MINUS | CARET | HASH | LCURL | RCURL | AT | NUMBER
@@ -117,6 +117,7 @@ option_dir ::= OPTION STRING STRING END {pin=1}
 include_dir ::= INCLUDE STRING END {pin=1}
 price_dir ::= DATE PRICE CURRENCY amount END {pin=2}
 open_dir ::= DATE OPEN account CURRENCY? END {pin=2}
+plugin_dir ::= PLUGIN STRING STRING* END {pin=1}
 balance_dir ::= DATE BALANCE account amount END {pin=2}
 commodity_dir ::= DATE COMMODITY CURRENCY END  {pin=2}
 transaction_dir ::=  DATE (TXN|FLAG) STRING? STRING? tag_link* END metadata_list posting_list  {pin=2}

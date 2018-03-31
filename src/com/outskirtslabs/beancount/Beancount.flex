@@ -70,7 +70,7 @@ META_KEY=[a-z][a-zA-Z0-9_-]+
 TAG_LINK_VAL=[A-Za-z0-9\-_/.]+
 
 // i know this probably isn't a "good" lexer design, it is too stateful but :\ it's my first one
-%state sOPT, sEVENT, sDATE_ENTRY, sOPEN, sBALANCE, sPRICE, sCOMMODITY, sMETA_LIST, sPOSTING, sACCOUNT, sCUSTOM, sPAD, sQUERY, sNOTE, sDOCUMENT, sINCLUDE
+%state sOPT, sEVENT, sDATE_ENTRY, sOPEN, sBALANCE, sPRICE, sCOMMODITY, sMETA_LIST, sPOSTING, sACCOUNT, sCUSTOM, sPAD, sQUERY, sNOTE, sDOCUMENT, sINCLUDE,sPLUGIN
 %xstate sTXN
 
 %%
@@ -85,7 +85,7 @@ TAG_LINK_VAL=[A-Za-z0-9\-_/.]+
 ^{LINE_SPACE}+{META_KEY} {  yypushback(nonWsIndex(yytext())); yypushstate(sMETA_LIST); return INDENT; }
 {CURRENCY}          { return CURRENCY; }
 
-<sOPT, sEVENT, sPRICE, sINCLUDE, sQUERY> {
+<sOPT, sEVENT, sPRICE, sINCLUDE, sQUERY, sPLUGIN> {
 {EOL}               { yylogstate(YYINITIAL); return EOL; }
 {LINE_SPACE}+       { return WHITE_SPACE; }
 {STRING}            { return STRING; }
@@ -144,6 +144,7 @@ TAG_LINK_VAL=[A-Za-z0-9\-_/.]+
 <YYINITIAL> {
   ^"option"         { yylogstate(sOPT); return OPTION; }
   ^"include"        { yylogstate(sINCLUDE); return INCLUDE;}
+  ^"plugin"        { yylogstate(sPLUGIN); return PLUGIN;}
   ^{DATE}           { yylogstate(sDATE_ENTRY); return DATE; }
   {COMMENT}         { return COMMENT; }
   {EOL}             { return EOL; }
@@ -170,7 +171,7 @@ TAG_LINK_VAL=[A-Za-z0-9\-_/.]+
 {NEGATIVE_NUMBER}   { return NEGATIVE_NUMBER; }
 {STRING}            { return STRING; }
 
-<sOPT, sEVENT, sDATE_ENTRY, sOPEN, sBALANCE, sCOMMODITY, sMETA_LIST, sPOSTING, sACCOUNT, sTXN, sPRICE, sCUSTOM, sPAD, sDOCUMENT, sNOTE, sQUERY, sINCLUDE>
+<sOPT, sEVENT, sDATE_ENTRY, sOPEN, sBALANCE, sCOMMODITY, sMETA_LIST, sPOSTING, sACCOUNT, sTXN, sPRICE, sCUSTOM, sPAD, sDOCUMENT, sNOTE, sQUERY, sINCLUDE, sPLUGIN>
 {
     [^] { return BAD_CHARACTER; }
 }
