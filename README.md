@@ -5,15 +5,15 @@ This is a plugin that adds support for [Beancount][bc] to JetBrains IDEs.
 Features:
 
 * Syntax highlighting
-* Account name completion
+* Completion: account names, currencies, directives
 * Formatting
 
 Roadmap:
 
+* date completion
 * bean-check execution
 * bean-doctor execution
 * inspection: transactions balance to 0
-* formatting: align posting amounts
 
 ### Contributing
 

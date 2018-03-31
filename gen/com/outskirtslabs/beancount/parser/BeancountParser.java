@@ -57,6 +57,9 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     else if (t == COST_SPEC) {
       r = cost_spec(b, 0);
     }
+    else if (t == CURRENCY_SYMBOL) {
+      r = currency_symbol(b, 0);
+    }
     else if (t == CUSTOM_DIR) {
       r = custom_dir(b, 0);
     }
@@ -95,6 +98,9 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     }
     else if (t == PAD_DIR) {
       r = pad_dir(b, 0);
+    }
+    else if (t == PLUGIN_DIR) {
+      r = plugin_dir(b, 0);
     }
     else if (t == POSTING_LINE) {
       r = posting_line(b, 0);
@@ -211,13 +217,13 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // expr CURRENCY
+  // expr currency_symbol
   public static boolean amount(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "amount")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, AMOUNT, "<amount>");
     r = expr(b, l + 1, -1);
-    r = r && consumeToken(b, CURRENCY);
+    r = r && currency_symbol(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -301,15 +307,16 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // DATE COMMODITY CURRENCY END
+  // DATE COMMODITY currency_symbol END
   public static boolean commodity_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "commodity_dir")) return false;
     if (!nextTokenIs(b, DATE)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, COMMODITY_DIR, null);
-    r = consumeTokens(b, 2, DATE, COMMODITY, CURRENCY);
+    r = consumeTokens(b, 2, DATE, COMMODITY);
     p = r; // pin = 2
-    r = r && END(b, l + 1);
+    r = r && report_error_(b, currency_symbol(b, l + 1));
+    r = p && END(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -436,6 +443,18 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // CURRENCY
+  public static boolean currency_symbol(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "currency_symbol")) return false;
+    if (!nextTokenIs(b, CURRENCY)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, CURRENCY);
+    exit_section_(b, m, CURRENCY_SYMBOL, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // DATE CUSTOM STRING (account|STRING|DATE|amount|expr|BOOLEAN)* END
   public static boolean custom_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "custom_dir")) return false;
@@ -554,7 +573,7 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // expr? CURRENCY?
+  // expr? currency_symbol?
   static boolean incomplete_amount(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "incomplete_amount")) return false;
     boolean r;
@@ -572,15 +591,15 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // CURRENCY?
+  // currency_symbol?
   private static boolean incomplete_amount_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "incomplete_amount_1")) return false;
-    consumeToken(b, CURRENCY);
+    currency_symbol(b, l + 1);
     return true;
   }
 
   /* ********************************************************** */
-  // !<<eof>>  (metadata_carrier|option_dir|include_dir|blank)
+  // !<<eof>>  (metadata_carrier|option_dir|include_dir|plugin_dir|blank)
   static boolean item(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "item")) return false;
     boolean r;
@@ -601,7 +620,7 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // metadata_carrier|option_dir|include_dir|blank
+  // metadata_carrier|option_dir|include_dir|plugin_dir|blank
   private static boolean item_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "item_1")) return false;
     boolean r;
@@ -609,6 +628,7 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     r = metadata_carrier(b, l + 1);
     if (!r) r = option_dir(b, l + 1);
     if (!r) r = include_dir(b, l + 1);
+    if (!r) r = plugin_dir(b, l + 1);
     if (!r) r = blank(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -642,14 +662,22 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // STRING
+  // STRING | account  |DATE | currency_symbol | expr | amount | NUMBER | bool | tag | empty
   public static boolean key_value_value(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "key_value_value")) return false;
-    if (!nextTokenIs(b, STRING)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, KEY_VALUE_VALUE, "<key value value>");
     r = consumeToken(b, STRING);
-    exit_section_(b, m, KEY_VALUE_VALUE, r);
+    if (!r) r = account(b, l + 1);
+    if (!r) r = consumeToken(b, DATE);
+    if (!r) r = currency_symbol(b, l + 1);
+    if (!r) r = expr(b, l + 1, -1);
+    if (!r) r = amount(b, l + 1);
+    if (!r) r = consumeToken(b, NUMBER);
+    if (!r) r = consumeToken(b, BOOL);
+    if (!r) r = consumeToken(b, TAG);
+    if (!r) r = consumeToken(b, EMPTY);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -708,7 +736,7 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // DATE OPEN account CURRENCY? END
+  // DATE OPEN account currency_symbol? END
   public static boolean open_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "open_dir")) return false;
     if (!nextTokenIs(b, DATE)) return false;
@@ -723,10 +751,10 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // CURRENCY?
+  // currency_symbol?
   private static boolean open_dir_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "open_dir_3")) return false;
-    consumeToken(b, CURRENCY);
+    currency_symbol(b, l + 1);
     return true;
   }
 
@@ -758,6 +786,33 @@ public class BeancountParser implements PsiParser, LightPsiParser {
     r = p && END(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  /* ********************************************************** */
+  // PLUGIN STRING STRING* END
+  public static boolean plugin_dir(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "plugin_dir")) return false;
+    if (!nextTokenIs(b, PLUGIN)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, PLUGIN_DIR, null);
+    r = consumeTokens(b, 1, PLUGIN, STRING);
+    p = r; // pin = 1
+    r = r && report_error_(b, plugin_dir_2(b, l + 1));
+    r = p && END(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // STRING*
+  private static boolean plugin_dir_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "plugin_dir_2")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!consumeToken(b, STRING)) break;
+      if (!empty_element_parsed_guard_(b, "plugin_dir_2", c)) break;
+      c = current_position_(b);
+    }
+    return true;
   }
 
   /* ********************************************************** */
@@ -832,15 +887,16 @@ public class BeancountParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // DATE PRICE CURRENCY amount END
+  // DATE PRICE currency_symbol amount END
   public static boolean price_dir(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "price_dir")) return false;
     if (!nextTokenIs(b, DATE)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, PRICE_DIR, null);
-    r = consumeTokens(b, 2, DATE, PRICE, CURRENCY);
+    r = consumeTokens(b, 2, DATE, PRICE);
     p = r; // pin = 2
-    r = r && report_error_(b, amount(b, l + 1));
+    r = r && report_error_(b, currency_symbol(b, l + 1));
+    r = p && report_error_(b, amount(b, l + 1)) && r;
     r = p && END(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;

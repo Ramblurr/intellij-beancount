@@ -12,10 +12,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.outskirtslabs.beancount.psi.BeancountAccount;
+import com.outskirtslabs.beancount.psi.BeancountCurrencySymbol;
 import com.outskirtslabs.beancount.psi.BeancountTypes;
 import com.outskirtslabs.beancount.psi.elements.BeancountElementFactory;
 import com.outskirtslabs.beancount.psi.reference.BeancountAccountReference;
+import com.outskirtslabs.beancount.psi.reference.BeancountCurrencySymbolReference;
 import com.outskirtslabs.beancount.psi.stub.AccountStub;
+import com.outskirtslabs.beancount.psi.stub.CurrencySymbolStub;
 
 public class BeancountPsiImplUtil
 {
@@ -117,5 +120,46 @@ public class BeancountPsiImplUtil
             return null;
 
         return new BeancountAccountReference(element, new TextRange(0, value.length()));
+    }
+
+    public static String getName(BeancountCurrencySymbol element)
+    {
+        CurrencySymbolStub stub = element.getStub();
+        if (stub != null)
+            return stub.getName();
+        return element.getText();
+    }
+
+    public static PsiElement setName(BeancountCurrencySymbol element, String newName)
+    {
+        return setName(element, BeancountTypes.CURRENCY,
+            BeancountElementFactory::createCurrencySymbol, newName);
+    }
+
+    public static PsiElement getNameIdentifier(BeancountCurrencySymbol element)
+    {
+        ASTNode node = element.getNode();
+        if (node != null)
+        {
+            return node.getPsi();
+        } else
+        {
+            return null;
+        }
+    }
+
+    public static PsiReference getReference(BeancountCurrencySymbol element)
+    {
+        if (element == null)
+            return null;
+
+        String value = element.getText();
+        if (element.getStub() != null)
+            value = element.getStub().getName();
+
+        if (StringUtils.isBlank(value))
+            return null;
+
+        return new BeancountCurrencySymbolReference(element, new TextRange(0, value.length()));
     }
 }

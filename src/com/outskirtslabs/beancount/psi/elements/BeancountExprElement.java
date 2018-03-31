@@ -15,6 +15,8 @@ public interface BeancountExprElement extends PsiElement
      * "12" -> 0
      */
     int getLengthPostDecimal();
+
     int getLengthPreDecimal();
+
     int getLengthPreDecimalWithAccount();
 }

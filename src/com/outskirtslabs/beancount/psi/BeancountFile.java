@@ -13,6 +13,7 @@ import com.intellij.psi.FileViewProvider;
 import com.outskirtslabs.beancount.BeancountFileType;
 import com.outskirtslabs.beancount.BeancountLanguage;
 import com.outskirtslabs.beancount.psi.stub.index.AccountStubIndex;
+import com.outskirtslabs.beancount.psi.stub.index.CurrencySymbolStubIndex;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -102,6 +103,16 @@ public class BeancountFile extends PsiFileBase
         Stopwatch stopwatch = Stopwatch.createStarted();
         Stream<String> distinct = AccountStubIndex.findAllAccounts(this.getProject()).stream()
                                                   .distinct();
+        log.info("getAllAccountsCached complete in {}", stopwatch.elapsed(TimeUnit.MICROSECONDS));
+        return distinct;
+    }
+
+    public Stream<String> getAllCurrenciesCached()
+    {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Stream<String> distinct = CurrencySymbolStubIndex.findAllCurrencySymbols(this.getProject())
+                                                         .stream()
+                                                         .distinct();
         log.info("getAllAccountsCached complete in {}", stopwatch.elapsed(TimeUnit.MICROSECONDS));
         return distinct;
     }

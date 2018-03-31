@@ -10,4 +10,7 @@ public interface BeancountOpenDir extends PsiElement {
   @Nullable
   BeancountAccount getAccount();
 
+  @Nullable
+  BeancountCurrencySymbol getCurrencySymbol();
+
 }

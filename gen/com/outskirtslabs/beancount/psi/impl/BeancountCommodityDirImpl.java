@@ -26,4 +26,10 @@ public class BeancountCommodityDirImpl extends ASTWrapperPsiElement implements B
     else super.accept(visitor);
   }
 
+  @Override
+  @Nullable
+  public BeancountCurrencySymbol getCurrencySymbol() {
+    return PsiTreeUtil.getChildOfType(this, BeancountCurrencySymbol.class);
+  }
+
 }

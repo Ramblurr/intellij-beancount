@@ -5,19 +5,20 @@ import org.jetbrains.annotations.NotNull;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IStubElementType;
-import com.outskirtslabs.beancount.psi.elements.BeancountAccountElement;
-import com.outskirtslabs.beancount.psi.stub.AccountStub;
+import com.outskirtslabs.beancount.psi.elements.BeancountCurrencyElement;
+import com.outskirtslabs.beancount.psi.stub.CurrencySymbolStub;
 
-public abstract class BeancountAccountElementImpl extends StubBasedPsiElementBase<AccountStub>
-    implements BeancountAccountElement
+public abstract class BeancountCurrencyElementImpl
+    extends StubBasedPsiElementBase<CurrencySymbolStub>
+    implements BeancountCurrencyElement
 {
-    public BeancountAccountElementImpl(@NotNull final AccountStub stub,
+    public BeancountCurrencyElementImpl(@NotNull final CurrencySymbolStub stub,
         @NotNull final IStubElementType nodeType)
     {
         super(stub, nodeType);
     }
 
-    public BeancountAccountElementImpl(@NotNull final ASTNode node)
+    public BeancountCurrencyElementImpl(@NotNull final ASTNode node)
     {
         super(node);
     }

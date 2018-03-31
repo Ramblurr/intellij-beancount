@@ -11,31 +11,19 @@ import static com.outskirtslabs.beancount.psi.BeancountTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.outskirtslabs.beancount.psi.*;
 
-public class BeancountOpenDirImpl extends ASTWrapperPsiElement implements BeancountOpenDir {
+public class BeancountPluginDirImpl extends ASTWrapperPsiElement implements BeancountPluginDir {
 
-  public BeancountOpenDirImpl(ASTNode node) {
+  public BeancountPluginDirImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull BeancountVisitor visitor) {
-    visitor.visitOpenDir(this);
+    visitor.visitPluginDir(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof BeancountVisitor) accept((BeancountVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @Nullable
-  public BeancountAccount getAccount() {
-    return PsiTreeUtil.getChildOfType(this, BeancountAccount.class);
-  }
-
-  @Override
-  @Nullable
-  public BeancountCurrencySymbol getCurrencySymbol() {
-    return PsiTreeUtil.getChildOfType(this, BeancountCurrencySymbol.class);
   }
 
 }

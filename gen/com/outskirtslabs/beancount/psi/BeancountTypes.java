@@ -10,7 +10,7 @@ import com.outskirtslabs.beancount.psi.impl.*;
 
 public interface BeancountTypes {
 
-  IElementType ACCOUNT = BeancountElementTypeFactory.factory("ACCOUNT");
+  IElementType ACCOUNT = BeancountElementTypeFactory.factoryAccount("ACCOUNT");
   IElementType ACCOUNT_DELIMITER = new BeancountElementType("ACCOUNT_DELIMITER");
   IElementType ACCOUNT_NAME = new BeancountElementType("ACCOUNT_NAME");
   IElementType ACCOUNT_SEGMENT = new BeancountElementType("ACCOUNT_SEGMENT");
@@ -21,6 +21,7 @@ public interface BeancountTypes {
   IElementType COST_COMP = new BeancountElementType("COST_COMP");
   IElementType COST_COMP_LIST = new BeancountElementType("COST_COMP_LIST");
   IElementType COST_SPEC = new BeancountElementType("COST_SPEC");
+  IElementType CURRENCY_SYMBOL = BeancountElementTypeFactory.factoryCurrency("CURRENCY_SYMBOL");
   IElementType CUSTOM_DIR = new BeancountElementType("CUSTOM_DIR");
   IElementType DIRECTIVE = new BeancountElementType("DIRECTIVE");
   IElementType DIV_EXPR = new BeancountElementType("DIV_EXPR");
@@ -39,6 +40,7 @@ public interface BeancountTypes {
   IElementType OPTION_DIR = new BeancountElementType("OPTION_DIR");
   IElementType PAD_DIR = new BeancountElementType("PAD_DIR");
   IElementType PAREN_EXPR = new BeancountElementType("PAREN_EXPR");
+  IElementType PLUGIN_DIR = new BeancountElementType("PLUGIN_DIR");
   IElementType PLUS_EXPR = new BeancountElementType("PLUS_EXPR");
   IElementType POSTING_LINE = new BeancountElementType("POSTING_LINE");
   IElementType POSTING_LIST = new BeancountElementType("POSTING_LIST");
@@ -56,6 +58,7 @@ public interface BeancountTypes {
   IElementType AT = new BeancountTokenType("AT");
   IElementType ATAT = new BeancountTokenType("ATAT");
   IElementType BALANCE = new BeancountTokenType("BALANCE");
+  IElementType BOOL = new BeancountTokenType("bool");
   IElementType BOOLEAN = new BeancountTokenType("BOOLEAN");
   IElementType CARET = new BeancountTokenType("CARET");
   IElementType COLON = new BeancountTokenType("COLON");
@@ -67,6 +70,7 @@ public interface BeancountTypes {
   IElementType DATE = new BeancountTokenType("DATE");
   IElementType DIVIDE = new BeancountTokenType("DIVIDE");
   IElementType DOCUMENT = new BeancountTokenType("DOCUMENT");
+  IElementType EMPTY = new BeancountTokenType("empty");
   IElementType EOL = new BeancountTokenType("eol");
   IElementType EVENT = new BeancountTokenType("EVENT");
   IElementType FLAG = new BeancountTokenType("FLAG");
@@ -85,6 +89,7 @@ public interface BeancountTypes {
   IElementType OPEN = new BeancountTokenType("OPEN");
   IElementType OPTION = new BeancountTokenType("OPTION");
   IElementType PAD = new BeancountTokenType("PAD");
+  IElementType PLUGIN = new BeancountTokenType("PLUGIN");
   IElementType PLUS = new BeancountTokenType("PLUS");
   IElementType PRICE = new BeancountTokenType("PRICE");
   IElementType QUERY = new BeancountTokenType("QUERY");
@@ -93,6 +98,7 @@ public interface BeancountTypes {
   IElementType RPAREN = new BeancountTokenType("RPAREN");
   IElementType SKIP = new BeancountTokenType("skip");
   IElementType STRING = new BeancountTokenType("STRING");
+  IElementType TAG = new BeancountTokenType("tag");
   IElementType TAG_LINK_VALUE = new BeancountTokenType("TAG_LINK_VALUE");
   IElementType TXN = new BeancountTokenType("TXN");
 
@@ -131,6 +137,9 @@ public interface BeancountTypes {
       }
       else if (type == COST_SPEC) {
         return new BeancountCostSpecImpl(node);
+      }
+      else if (type == CURRENCY_SYMBOL) {
+        return new BeancountCurrencySymbolImpl(node);
       }
       else if (type == CUSTOM_DIR) {
         return new BeancountCustomDirImpl(node);
@@ -182,6 +191,9 @@ public interface BeancountTypes {
       }
       else if (type == PAREN_EXPR) {
         return new BeancountParenExprImpl(node);
+      }
+      else if (type == PLUGIN_DIR) {
+        return new BeancountPluginDirImpl(node);
       }
       else if (type == PLUS_EXPR) {
         return new BeancountPlusExprImpl(node);

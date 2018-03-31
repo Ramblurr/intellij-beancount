@@ -7,7 +7,22 @@ import com.intellij.psi.PsiElement;
 
 public interface BeancountKeyValueValue extends PsiElement {
 
-  @NotNull
+  @Nullable
+  BeancountAccount getAccount();
+
+  @Nullable
+  BeancountAmount getAmount();
+
+  @Nullable
+  BeancountCurrencySymbol getCurrencySymbol();
+
+  @Nullable
+  BeancountExpr getExpr();
+
+  @Nullable
+  PsiElement getNumber();
+
+  @Nullable
   PsiElement getString();
 
 }

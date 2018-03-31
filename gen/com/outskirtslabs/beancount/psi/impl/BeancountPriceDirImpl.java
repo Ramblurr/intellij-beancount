@@ -32,4 +32,10 @@ public class BeancountPriceDirImpl extends ASTWrapperPsiElement implements Beanc
     return PsiTreeUtil.getChildOfType(this, BeancountAmount.class);
   }
 
+  @Override
+  @Nullable
+  public BeancountCurrencySymbol getCurrencySymbol() {
+    return PsiTreeUtil.getChildOfType(this, BeancountCurrencySymbol.class);
+  }
+
 }

@@ -12,7 +12,7 @@
   <p>Features</p>
   <ul>
     <li>Syntax highlighting</li>
-    <li>Account name completion</li>
+    <li>Completion: account names, currencies, directives</li>
     <li>Formatting</li>
   </ul>
   <p>More features coming soon</p>
@@ -49,6 +49,7 @@
     <psi.referenceContributor language="Beancount" implementation="com.outskirtslabs.beancount.features.references.BeancountReferenceContributor"/>
     <stubElementTypeHolder class="com.outskirtslabs.beancount.psi.BeancountTypes"/>
     <stubIndex implementation="com.outskirtslabs.beancount.psi.stub.index.AccountStubIndex"/>
+    <stubIndex implementation="com.outskirtslabs.beancount.psi.stub.index.CurrencySymbolStubIndex"/>
   </extensions>
   <!--@formatter:on-->
 

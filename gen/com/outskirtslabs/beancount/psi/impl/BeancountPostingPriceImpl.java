@@ -28,6 +28,12 @@ public class BeancountPostingPriceImpl extends ASTWrapperPsiElement implements B
 
   @Override
   @Nullable
+  public BeancountCurrencySymbol getCurrencySymbol() {
+    return PsiTreeUtil.getChildOfType(this, BeancountCurrencySymbol.class);
+  }
+
+  @Override
+  @Nullable
   public BeancountExpr getExpr() {
     return PsiTreeUtil.getChildOfType(this, BeancountExpr.class);
   }

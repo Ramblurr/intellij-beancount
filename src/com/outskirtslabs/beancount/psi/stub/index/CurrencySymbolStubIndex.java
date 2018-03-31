@@ -11,16 +11,16 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
-import com.outskirtslabs.beancount.psi.BeancountAccount;
+import com.outskirtslabs.beancount.psi.BeancountCurrencySymbol;
 
-public class AccountStubIndex extends StringStubIndexExtension<BeancountAccount>
+public class CurrencySymbolStubIndex extends StringStubIndexExtension<BeancountCurrencySymbol>
 {
     public static final int VERSION = 2;
 
-    public AccountStubIndex()
+    public CurrencySymbolStubIndex()
     {}
 
-    public static Collection<BeancountAccount> find(Project project, String accountName)
+    public static Collection<BeancountCurrencySymbol> find(Project project, String currencySymbol)
     {
         if (DumbService.isDumb(project))
         {
@@ -30,15 +30,15 @@ public class AccountStubIndex extends StringStubIndexExtension<BeancountAccount>
 
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         return StubIndex.getElements(
-            BeancountAccountKeyIndex.KEY,
-            accountName,
+            BeancountCurrencySymbolKeyIndex.KEY,
+            currencySymbol,
             project,
             scope,
-            BeancountAccount.class
+            BeancountCurrencySymbol.class
         );
     }
 
-    public static Collection<String> findAllAccounts(Project project)
+    public static Collection<String> findAllCurrencySymbols(Project project)
     {
         if (DumbService.isDumb(project))
         {
@@ -48,7 +48,7 @@ public class AccountStubIndex extends StringStubIndexExtension<BeancountAccount>
 
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         return StubIndex.getInstance()
-                        .getAllKeys(BeancountAccountKeyIndex.KEY, project);
+                        .getAllKeys(BeancountCurrencySymbolKeyIndex.KEY, project);
     }
 
     @Override
@@ -59,9 +59,9 @@ public class AccountStubIndex extends StringStubIndexExtension<BeancountAccount>
 
     @NotNull
     @Override
-    public StubIndexKey<String, BeancountAccount> getKey()
+    public StubIndexKey<String, BeancountCurrencySymbol> getKey()
     {
-        return BeancountAccountKeyIndex.KEY;
+        return BeancountCurrencySymbolKeyIndex.KEY;
     }
 
 }

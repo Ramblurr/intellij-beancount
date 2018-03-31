@@ -6,23 +6,23 @@ import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
 import com.intellij.lang.cacheBuilder.WordsScanner;
 import com.intellij.lang.findUsages.FindUsagesProvider;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
 import com.outskirtslabs.beancount.parser.BeancountLexer;
 import com.outskirtslabs.beancount.psi.BeancountAccount;
+import com.outskirtslabs.beancount.psi.BeancountCurrencySymbol;
 import com.outskirtslabs.beancount.psi.BeancountTypes;
+import com.outskirtslabs.beancount.psi.elements.BeancountNamedElement;
 
 public class BeancountFindUsagesProvider implements FindUsagesProvider
 {
-    private static Logger LOG = Logger.getInstance(BeancountFindUsagesProvider.class);
-
     @Nullable
     @Override
     public WordsScanner getWordsScanner()
     {
         return new DefaultWordsScanner(new BeancountLexer(),
-            TokenSet.create(BeancountTypes.ACCOUNT, BeancountTypes.ACCOUNT_WORD),
+            TokenSet.create(BeancountTypes.ACCOUNT, BeancountTypes.ACCOUNT_WORD,
+                BeancountTypes.CURRENCY),
             TokenSet.create(BeancountTypes.COMMENT),
             TokenSet.create(BeancountTypes.STRING));
     }
@@ -30,7 +30,7 @@ public class BeancountFindUsagesProvider implements FindUsagesProvider
     @Override
     public boolean canFindUsagesFor(@NotNull PsiElement psiElement)
     {
-        return psiElement instanceof BeancountAccount;
+        return psiElement instanceof BeancountNamedElement;
     }
 
     @Nullable
@@ -45,39 +45,32 @@ public class BeancountFindUsagesProvider implements FindUsagesProvider
     public String getType(@NotNull PsiElement element)
     {
         if (element instanceof BeancountAccount)
-        {
             return "account";
-        } else
-        {
-            LOG.info("getType: " + element.getClass());
+        else if (element instanceof BeancountCurrencySymbol)
+            return "currencysymbol";
+        else
             return "";
-        }
     }
 
     @NotNull
     @Override
     public String getDescriptiveName(@NotNull PsiElement element)
     {
-        if (element instanceof BeancountAccount)
-        {
-            return ((BeancountAccount) element).getName();
-        } else
-        {
-            LOG.info("getDEscName: " + element.getClass());
+        if (element instanceof BeancountNamedElement)
+            return ((BeancountNamedElement) element).getName();
+        else
             return "";
-        }
     }
 
     @NotNull
     @Override
     public String getNodeText(@NotNull PsiElement element, boolean useFullName)
     {
-        if (element instanceof BeancountAccount)
+        if (element instanceof BeancountNamedElement)
         {
-            return ((BeancountAccount) element).getName();
+            return ((BeancountNamedElement) element).getName();
         } else
         {
-            LOG.info("getNodeT: " + element.getClass());
             return "";
         }
     }

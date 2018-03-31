@@ -64,8 +64,16 @@ account ::= ACCOUNT_WORD account_segment* { mixin="com.outskirtslabs.beancount.p
                                  implements="com.outskirtslabs.beancount.psi.elements.BeancountAccountElement"
                                  methods=[getName setName getNameIdentifier getReference]
                                  stubClass= "com.outskirtslabs.beancount.psi.stub.AccountStub"
-                                 elementTypeFactory="com.outskirtslabs.beancount.psi.elements.BeancountElementTypeFactory.factory"
+                                 elementTypeFactory="com.outskirtslabs.beancount.psi.elements.BeancountElementTypeFactory.factoryAccount"
                                }
+
+currency_symbol ::= CURRENCY {
+mixin="com.outskirtslabs.beancount.psi.impl.BeancountCurrencyElementImpl"
+                                 implements="com.outskirtslabs.beancount.psi.elements.BeancountCurrencyElement"
+                                 methods=[getName setName getNameIdentifier getReference]
+                                 stubClass= "com.outskirtslabs.beancount.psi.stub.CurrencySymbolStub"
+                                 elementTypeFactory="com.outskirtslabs.beancount.psi.elements.BeancountElementTypeFactory.factoryCurrency"
+}
 
 expr ::=
     add_group
@@ -90,10 +98,10 @@ plus_expr ::= expr PLUS expr
 paren_expr ::= LPAREN expr RPAREN
 literal_expr ::= NUMBER | NEGATIVE_NUMBER
 
-amount ::= expr CURRENCY
+amount ::= expr currency_symbol
 
 
-key_value_value ::= STRING //| account  |DATE | CURRENCY | expr | amount | NUMBER | bool | tag | empty
+key_value_value ::= STRING | account | DATE | currency_symbol | expr | amount | NUMBER | bool | tag | empty
 key_value ::= META_KEY META_KV_DELIMITER key_value_value
 private key_value_line ::= INDENT key_value END
 private metadata_list ::=  key_value_line*
@@ -103,7 +111,7 @@ tag_value ::= HASH TAG_LINK_VALUE
 link_value ::= CARET TAG_LINK_VALUE
 tag_link ::= link_value | tag_value
 
-private incomplete_amount ::=  expr? CURRENCY?
+private incomplete_amount ::=  expr? currency_symbol?
 
 compound_amount ::= (expr HASH amount)
 cost_comp ::= compound_amount | amount | DATE | STRING | ASTERISK
@@ -115,11 +123,11 @@ posting_list ::= posting_line*
 
 option_dir ::= OPTION STRING STRING END {pin=1}
 include_dir ::= INCLUDE STRING END {pin=1}
-price_dir ::= DATE PRICE CURRENCY amount END {pin=2}
-open_dir ::= DATE OPEN account CURRENCY? END {pin=2}
 plugin_dir ::= PLUGIN STRING STRING* END {pin=1}
+price_dir ::= DATE PRICE currency_symbol amount END {pin=2}
+open_dir ::= DATE OPEN account currency_symbol? END {pin=2}
 balance_dir ::= DATE BALANCE account amount END {pin=2}
-commodity_dir ::= DATE COMMODITY CURRENCY END  {pin=2}
+commodity_dir ::= DATE COMMODITY currency_symbol END  {pin=2}
 transaction_dir ::=  DATE (TXN|FLAG) STRING? STRING? tag_link* END metadata_list posting_list  {pin=2}
 event_dir ::= DATE EVENT STRING STRING END {pin=2}
 custom_dir ::= DATE CUSTOM STRING (account|STRING|DATE|amount|expr|BOOLEAN)* END {pin=2}

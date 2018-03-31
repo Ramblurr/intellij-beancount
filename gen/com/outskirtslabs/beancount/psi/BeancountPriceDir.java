@@ -10,4 +10,7 @@ public interface BeancountPriceDir extends PsiElement {
   @Nullable
   BeancountAmount getAmount();
 
+  @Nullable
+  BeancountCurrencySymbol getCurrencySymbol();
+
 }
