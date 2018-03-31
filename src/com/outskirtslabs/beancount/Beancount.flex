@@ -53,7 +53,7 @@ import static com.outskirtslabs.beancount.BeancountLexerUtil.*;
 //EOL=\R
 WHITE_SPACE=\s+
 
-NUMBER=[0-9]+(\.[0-9]*)?
+NUMBER=(\d+)((\d{1,3})*([\,]\d{3})*)(\.\d+)?
 NEGATIVE_NUMBER=-{NUMBER}
 DATE=[:digit:]{4}-[:digit:]{2}-[:digit:]{2}
 STRING=(\"([^\"\\]|\\.)*\")
