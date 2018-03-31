@@ -1,6 +1,11 @@
 1980-05-12 open Equity:Opening-Balances
 1980-05-12 open Liabilities:AccountsPayable
 
+plugin "plugins.redstreet.zerosum.zerosum" "{
+     'zerosum_accounts' : {
+     'Equity:Transfers:Forex' : ('ZeroSumAccount-Matched:Transfers', 14),
+      }
+     }"
 
 * Banking
 
