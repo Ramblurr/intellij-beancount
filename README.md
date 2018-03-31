@@ -2,6 +2,8 @@
 
 This is a plugin that adds support for [Beancount][bc] to JetBrains IDEs.
 
+![screenshot](screenshot.png)
+
 Features:
 
 * Syntax highlighting
