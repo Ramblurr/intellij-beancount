@@ -48,6 +48,8 @@ allprojects {
 
 dependencies {
     compile('io.vavr:vavr:0.9.2')
+    // force-pull org.apache.commons.lang3.StringUtils - seems to not exist in all jetbrains-products
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 }
 
 repositories {
