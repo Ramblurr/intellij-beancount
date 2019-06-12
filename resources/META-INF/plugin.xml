@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.outskirtslabs.beancount</id>
     <name>Beancount</name>
-    <version>0.1</version>
+    <version>0.2</version>
     <vendor email="unnamedrambler@gmail.com" url="https://caseylink.com">Casey Link</vendor>
 
     <description><![CDATA[
