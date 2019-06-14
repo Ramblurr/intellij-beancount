@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.outskirtslabs.beancount</id>
     <name>Beancount</name>
-    <version>0.1</version>
+    <version>0.2</version>
     <vendor email="unnamedrambler@gmail.com" url="https://caseylink.com">Casey Link</vendor>
 
     <description><![CDATA[
@@ -29,9 +29,8 @@
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
-    <!-- uncomment to enable plugin in all products
+    <!-- enable plugin in all products -->
     <depends>com.intellij.modules.lang</depends>
-    -->
 
     <!--@formatter:off-->
   <extensions defaultExtensionNs="com.intellij">
